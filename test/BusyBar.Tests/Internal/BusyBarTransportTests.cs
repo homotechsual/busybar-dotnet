@@ -141,4 +141,58 @@ public class BusyBarTransportTests
         using var reader = new StreamReader(stream);
         Assert.Equal("raw-bytes", await reader.ReadToEndAsync());
     }
+
+    [Fact]
+    public async Task SendJsonAsync_ThrowsTimeoutException_WhenBodyStallsAfterFastHeaders()
+    {
+        // Headers arrive immediately; only the body content is delayed past the configured timeout. Before the
+        // fix, SendCoreAsync used HttpCompletionOption.ResponseHeadersRead and the timeout/linked cancellation
+        // tokens were disposed the moment headers came back, so a stalled body was never bounded by this timeout.
+        var (transport, handler) = CreateTransport(TimeSpan.FromMilliseconds(100));
+        handler.BodyDelay = TimeSpan.FromSeconds(5);
+
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        await Assert.ThrowsAsync<TimeoutException>(
+            () => transport.SendJsonAsync<SuccessResponse>(HttpMethod.Get, "busybar/version"));
+        sw.Stop();
+
+        Assert.True(sw.Elapsed < TimeSpan.FromSeconds(2), $"Expected timeout well under the 5s body stall, took {sw.Elapsed}.");
+    }
+
+    [Fact]
+    public async Task SendJsonAsync_ThrowsOperationCanceledException_WhenRequestOptionsCancelDuringBodyRead()
+    {
+        // The default timeout is generous (well past the assertion window) so only the RequestOptions
+        // cancellation token — not the timeout — should be able to trip this. Before the fix, RequestOptions
+        // .CancellationToken never reached the body-read phase at all, so this cancellation would be ignored
+        // once headers had already been received.
+        var (transport, handler) = CreateTransport(TimeSpan.FromSeconds(5));
+        handler.BodyDelay = TimeSpan.FromSeconds(5);
+        using var optionsCts = new CancellationTokenSource();
+        optionsCts.CancelAfter(TimeSpan.FromMilliseconds(100));
+        var options = new RequestOptions { CancellationToken = optionsCts.Token };
+
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(
+            () => transport.SendJsonAsync<SuccessResponse>(HttpMethod.Get, "busybar/version", options: options));
+        sw.Stop();
+
+        Assert.True(sw.Elapsed < TimeSpan.FromSeconds(2), $"Expected cancellation well under the 5s body stall, took {sw.Elapsed}.");
+    }
+
+    [Fact]
+    public async Task TimeoutException_Message_DoesNotContainQueryStringValue()
+    {
+        var (transport, handler) = CreateTransport(TimeSpan.FromMilliseconds(50));
+        handler.ResponseDelay = TimeSpan.FromSeconds(2);
+        const string secretKey = "839217";
+
+        var exception = await Assert.ThrowsAsync<TimeoutException>(
+            () => transport.SendJsonAsync<SuccessResponse>(
+                HttpMethod.Post, "busybar/access",
+                query: new Dictionary<string, string?> { ["mode"] = "key", ["key"] = secretKey }));
+
+        Assert.DoesNotContain(secretKey, exception.Message);
+        Assert.Contains("busybar/access", exception.Message);
+    }
 }
