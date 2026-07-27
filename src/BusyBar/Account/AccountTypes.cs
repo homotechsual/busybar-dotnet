@@ -3,10 +3,10 @@ using System.Text.Json.Serialization;
 namespace Busy.Bar;
 
 public sealed record AccountInfo(
-    [property: JsonPropertyName("linked")] bool? Linked,
-    [property: JsonPropertyName("id")] string? Id,
-    [property: JsonPropertyName("email")] string? Email,
-    [property: JsonPropertyName("user_id")] string? UserId);
+    bool? Linked,
+    string? Id,
+    string? Email,
+    string? UserId);
 
 public enum AccountConnectionStatus
 {
@@ -16,7 +16,7 @@ public enum AccountConnectionStatus
 }
 
 public sealed record AccountStatus(
-    [property: JsonPropertyName("status")] AccountConnectionStatus? Status);
+    AccountConnectionStatus? Status);
 
 public enum ClientCertType
 {
@@ -26,6 +26,6 @@ public enum ClientCertType
 }
 
 public sealed record AccountBackend(
-    [property: JsonPropertyName("server_url")] string ServerUrl,
-    [property: JsonPropertyName("client_cert_type")] ClientCertType ClientCertType,
-    [property: JsonPropertyName("ignore_server_cert")] bool IgnoreServerCert);
+    string ServerUrl,
+    ClientCertType ClientCertType,
+    bool IgnoreServerCert);
