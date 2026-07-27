@@ -19,13 +19,26 @@ public class BusyBarCoreTests
     }
 
     [Fact]
-    public async Task HttpClientConstructor_IsPublicAndUsable()
+    public void HttpClientConstructor_IsPublic()
+    {
+        // Reflection-based check of the constructor's accessibility modifier. This is independent of
+        // InternalsVisibleTo("BusyBar.Tests") (see AssemblyInfo.cs) — merely being able to call the constructor
+        // from this assembly would NOT prove it is public, since InternalsVisibleTo would let an `internal`
+        // constructor compile and pass identically here.
+        var ctor = typeof(Busy.Bar.BusyBar).GetConstructor(new[] { typeof(HttpClient), typeof(Busy.Bar.BusyBarOptions) });
+
+        Assert.NotNull(ctor);
+        Assert.True(ctor!.IsPublic);
+    }
+
+    [Fact]
+    public async Task HttpClientConstructor_IsUsable()
     {
         var handler = new FakeHttpMessageHandler { ResponseBody = "{\"name\":\"My Bar\"}" };
         using var httpClient = new HttpClient(handler) { BaseAddress = new Uri("http://10.0.4.20/") };
 
-        // The constructor being callable at all (from this assembly, without relying on InternalsVisibleTo)
-        // proves it is public; the round-trip call proves it is fully wired up.
+        // The round-trip call proves the constructor is fully wired up (accessibility is covered separately by
+        // HttpClientConstructor_IsPublic above).
         using var bar = new Busy.Bar.BusyBar(httpClient, new Busy.Bar.BusyBarOptions());
         var result = await bar.NameGetAsync();
 

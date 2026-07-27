@@ -84,14 +84,22 @@ internal sealed class BusyBarTransport
     {
         var optionsToken = options?.CancellationToken ?? CancellationToken.None;
         var transportResponse = await SendCoreAsync(method, path, query, content: null, options, cancellationToken).ConfigureAwait(false);
-        // Intentionally do NOT call transportResponse.DisposeCancellation() (and do not dispose the
-        // HttpResponseMessage either, matching the pre-existing behavior of this method) — the returned Stream
-        // outlives this call and the caller keeps reading from it with ReadCancellationToken, so the timeout and
-        // linked CancellationTokenSources must stay alive past the method boundary. They are released only when
-        // finalized/collected; a stream-wrapping disposal chain was judged overkill for this rarely-hot path.
-        return await transportResponse.ReadBodyAsync(
-            token => transportResponse.Response.Content.ReadAsStreamAsync(token),
-            cancellationToken, optionsToken).ConfigureAwait(false);
+        // Intentionally do NOT dispose the HttpResponseMessage here (matching the pre-existing behavior of this
+        // method) — the returned Stream outlives this call and reads from the response's underlying connection.
+        // However, ReadCancellationToken is only used by the ReadAsStreamAsync call below to obtain the Stream
+        // object; nothing wires it into subsequent reads on the returned Stream. So, like SendJsonAsync and
+        // SendBinaryUploadAsync, the timeout/linked CancellationTokenSources can (and must, to avoid leaking
+        // registrations on the caller's token) be disposed once the stream has been obtained.
+        try
+        {
+            return await transportResponse.ReadBodyAsync(
+                token => transportResponse.Response.Content.ReadAsStreamAsync(token),
+                cancellationToken, optionsToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            transportResponse.DisposeCancellation();
+        }
     }
 
     private async Task<TransportResponse> SendCoreAsync(
