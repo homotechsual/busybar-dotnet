@@ -1337,10 +1337,12 @@ public sealed record BusySnapshotInterval : BusySnapshotState
 
 public sealed record BusySnapshot(BusySnapshotState Snapshot, long SnapshotTimestampMs);
 
+/// <summary>Never JSON-serialized — only ever used as a URL path segment via <c>ToApiString</c> below, so
+/// (unlike every other enum in this library) it deliberately carries no [JsonStringEnumMemberName] attributes.</summary>
 public enum BusyProfileSlot
 {
-    [JsonStringEnumMemberName("busy")] Busy,
-    [JsonStringEnumMemberName("custom")] Custom
+    Busy,
+    Custom
 }
 
 public sealed record BusyProfile
