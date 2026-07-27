@@ -102,6 +102,20 @@ public class BusyBarTransportTests
     }
 
     [Fact]
+    public async Task SendJsonAsync_ThrowsOperationCanceledException_WhenCallerCancels_AndRequestOptionsSet()
+    {
+        var (transport, handler) = CreateTransport();
+        handler.ResponseDelay = TimeSpan.FromSeconds(2);
+        using var cts = new CancellationTokenSource();
+        cts.CancelAfter(TimeSpan.FromMilliseconds(20));
+        var options = new RequestOptions { Timeout = TimeSpan.FromSeconds(3) };
+
+        await Assert.ThrowsAsync<TaskCanceledException>(
+            () => transport.SendJsonAsync<SuccessResponse>(
+                HttpMethod.Get, "busybar/version", options: options, cancellationToken: cts.Token));
+    }
+
+    [Fact]
     public async Task SendBinaryUploadAsync_SendsOctetStreamContentType()
     {
         var (transport, handler) = CreateTransport();
