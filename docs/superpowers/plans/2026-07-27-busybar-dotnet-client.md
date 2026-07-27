@@ -371,9 +371,9 @@ internal sealed class BusyBarTransport
         ApplyAuth(request);
 
         var timeout = options?.Timeout ?? _defaultTimeout;
-        var callerToken = options?.CancellationToken ?? cancellationToken;
+        var optionsToken = options?.CancellationToken ?? CancellationToken.None;
         using var timeoutCts = new CancellationTokenSource(timeout);
-        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(timeoutCts.Token, callerToken);
+        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(timeoutCts.Token, cancellationToken, optionsToken);
 
         HttpResponseMessage response;
         try
@@ -381,21 +381,27 @@ internal sealed class BusyBarTransport
             response = await _http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, linkedCts.Token)
                 .ConfigureAwait(false);
         }
-        catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested && !callerToken.IsCancellationRequested)
+        catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested && !cancellationToken.IsCancellationRequested && !optionsToken.IsCancellationRequested)
         {
             throw new TimeoutException($"BUSY Bar request to {uri} timed out after {timeout}.");
         }
 
         if (!response.IsSuccessStatusCode)
         {
-            var statusCode = response.StatusCode;
-            var reasonPhrase = response.ReasonPhrase;
-            var body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            BusyBarErrorBody? parsed = null;
-            try { parsed = JsonSerializer.Deserialize<BusyBarErrorBody>(body, JsonOptions); }
-            catch (JsonException) { /* raw body still surfaced via RawBody */ }
-            response.Dispose();
-            throw new BusyBarApiException(statusCode, reasonPhrase, body, parsed);
+            try
+            {
+                var statusCode = response.StatusCode;
+                var reasonPhrase = response.ReasonPhrase;
+                var body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                BusyBarErrorBody? parsed = null;
+                try { parsed = JsonSerializer.Deserialize<BusyBarErrorBody>(body, JsonOptions); }
+                catch (JsonException) { /* raw body still surfaced via RawBody */ }
+                throw new BusyBarApiException(statusCode, reasonPhrase, body, parsed);
+            }
+            finally
+            {
+                response.Dispose();
+            }
         }
 
         return response;
