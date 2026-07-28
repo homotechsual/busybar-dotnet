@@ -2,6 +2,7 @@ namespace Busy.Bar;
 
 public sealed partial class BusyBar
 {
+    /// <summary>Simulates a single key press event on the device.</summary>
     public Task<SuccessResponse> InputKeySetAsync(InputKeyParams parameters, RequestOptions? options = null, CancellationToken cancellationToken = default)
         => _transport.SendJsonAsync<SuccessResponse>(HttpMethod.Post, "busybar/input",
             query: new Dictionary<string, string?> { ["key"] = ToApiString(parameters.Key) },

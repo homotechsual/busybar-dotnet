@@ -12,6 +12,7 @@ public sealed partial class BusyBar
             },
             requestBody: fileContent, options: options, cancellationToken: cancellationToken);
 
+    /// <summary>Deletes all uploaded assets for the given application.</summary>
     public Task<SuccessResponse> AssetsDeleteAsync(AssetsDeleteParams parameters, RequestOptions? options = null, CancellationToken cancellationToken = default)
         => _transport.SendJsonAsync<SuccessResponse>(HttpMethod.Delete, "busybar/assets/upload",
             query: new Dictionary<string, string?> { ["application_name"] = parameters.ApplicationName },
