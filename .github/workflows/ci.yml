@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+  code-quality: write
+  pull-requests: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,5 +29,21 @@ jobs:
       - name: Build
         run: dotnet build BusyBar.sln --no-restore -c Release
 
+      # coverage.runsettings sets IncludeTestAssembly=False so the reported percentage
+      # reflects the BusyBar library only, not the (trivially near-100%-covered) test project.
       - name: Test
-        run: dotnet test BusyBar.sln --no-build -c Release
+        run: dotnet test BusyBar.sln --no-build -c Release --settings coverage.runsettings --results-directory ./TestResults
+
+      - name: Locate coverage report
+        id: coverage
+        shell: bash
+        run: |
+          file=$(find ./TestResults -name '*.cobertura.xml' -print -quit)
+          echo "file=$file" >> "$GITHUB_OUTPUT"
+
+      - name: Upload code coverage
+        uses: actions/upload-code-coverage@v1
+        with:
+          file: ${{ steps.coverage.outputs.file }}
+          language: CSharp
+          label: code-coverage/busybar
