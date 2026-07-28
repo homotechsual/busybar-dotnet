@@ -56,6 +56,12 @@ function HomepageHeader() {
               alt="NuGet version"
             />
           </a>
+          <a href="https://codecov.io/gh/homotechsual/busybar-dotnet">
+            <img
+              src="https://img.shields.io/codecov/c/github/homotechsual/busybar-dotnet?style=for-the-badge&label=Coverage"
+              alt="Test coverage"
+            />
+          </a>
         </p>
         <div className={styles.buttons}>
           <Link className="button button--secondary button--lg" to="/intro">

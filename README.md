@@ -2,6 +2,7 @@
 
 [![CI](https://img.shields.io/github/actions/workflow/status/homotechsual/busybar-dotnet/ci.yml?branch=main&style=for-the-badge&label=CI)](https://github.com/homotechsual/busybar-dotnet/actions/workflows/ci.yml)
 [![NuGet](https://img.shields.io/nuget/v/BusyBar?style=for-the-badge&label=NuGet)](https://www.nuget.org/packages/BusyBar)
+[![Codecov](https://img.shields.io/codecov/c/github/homotechsual/busybar-dotnet?style=for-the-badge&label=Coverage)](https://codecov.io/gh/homotechsual/busybar-dotnet)
 
 A typed .NET client for the [BUSY Bar HTTP API](https://docs.busy.app/bar/dev/http-api),
 modelled on the official [`@busy-app/busy-lib`](https://github.com/busy-app/busylib-ts)
