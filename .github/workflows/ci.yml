@@ -40,7 +40,7 @@ jobs:
           echo "file=$file" >> "$GITHUB_OUTPUT"
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           files: ${{ steps.coverage.outputs.file }}
           token: ${{ secrets.CODECOV_TOKEN }}
