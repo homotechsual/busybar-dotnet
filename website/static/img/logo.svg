@@ -1,11 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="BusyBar logo">
-  <rect x="1" y="1" width="30" height="30" rx="7" fill="#263141" />
+  <!-- No backdrop rect on purpose: the navbar background is already #263141, the same color
+       the backdrop used to be, which made the whole logo disappear into the navbar. -->
   <g fill="#a42828">
-    <rect x="7" y="9" width="4" height="4" rx="1" />
-    <rect x="14" y="9" width="4" height="4" rx="1" />
-    <rect x="21" y="9" width="4" height="4" rx="1" />
-    <rect x="7" y="16" width="4" height="4" rx="1" />
-    <rect x="14" y="16" width="4" height="4" rx="1" />
-    <rect x="21" y="16" width="4" height="4" rx="1" />
+    <rect x="4" y="7" width="7" height="7" rx="1.5" />
+    <rect x="12.5" y="7" width="7" height="7" rx="1.5" />
+    <rect x="21" y="7" width="7" height="7" rx="1.5" />
+    <rect x="4" y="18" width="7" height="7" rx="1.5" />
+    <rect x="12.5" y="18" width="7" height="7" rx="1.5" />
+    <rect x="21" y="18" width="7" height="7" rx="1.5" />
   </g>
 </svg>

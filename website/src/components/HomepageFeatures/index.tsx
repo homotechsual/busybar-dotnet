@@ -12,7 +12,7 @@ type FeatureItem = {
 const FeatureList: FeatureItem[] = [
   {
     title: 'Full API Coverage',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    Svg: require('@site/static/img/icon-coverage.svg').default,
     description: (
       <>
         Every namespace of the BUSY Bar HTTP API — Account, Assets, Audio, Ble,
@@ -23,7 +23,7 @@ const FeatureList: FeatureItem[] = [
   },
   {
     title: 'Typed & Idiomatic',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    Svg: require('@site/static/img/icon-typed.svg').default,
     description: (
       <>
         C# records, polymorphic JSON via <code>System.Text.Json</code>, and a
@@ -34,7 +34,7 @@ const FeatureList: FeatureItem[] = [
   },
   {
     title: 'Local & Cloud',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    Svg: require('@site/static/img/icon-cloud.svg').default,
     description: (
       <>
         Works against a device over USB/LAN or the BUSY Cloud proxy — the
@@ -45,7 +45,7 @@ const FeatureList: FeatureItem[] = [
   },
   {
     title: 'Validated on Real Hardware',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    Svg: require('@site/static/img/icon-hardware.svg').default,
     description: (
       <>
         Every namespace has been exercised against a physical BUSY Bar —

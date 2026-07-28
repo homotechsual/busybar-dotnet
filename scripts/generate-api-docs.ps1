@@ -59,4 +59,34 @@ Get-ChildItem -Path $apiDocsOutput -Filter '*.md' -Recurse | ForEach-Object {
     (Get-Content -Path $_.FullName -Raw) -replace '<br>', '<br/>' | Set-Content -Path $_.FullName -NoNewline
 }
 
+# xmldoc2md renders enum members as a Markdown table ("| Name | Value | Description |"), not
+# headings, so <see cref="Enum.Member"/> cross-references it generates (e.g. "#key") point at an
+# anchor that doesn't exist — Docusaurus only auto-generates anchors for real headings. Rather than
+# just suppressing the resulting warning, give those links something real to land on: inject an
+# HTML anchor with a matching id into each field-table row. Data rows are distinguished from the
+# table's header/separator rows by having a numeric second column (the enum's underlying value).
+Write-Host "==> Adding real anchors to enum field tables so 'see cref' links resolve"
+$fieldRowPattern = '(?m)^\| (\w+) \| (-?\d+) \| '
+$fieldRowEvaluator = [System.Text.RegularExpressions.MatchEvaluator] {
+    param($match)
+    $name = $match.Groups[1].Value
+    $value = $match.Groups[2].Value
+    $anchorId = $name.ToLowerInvariant()
+    "| <a id=""$anchorId""></a>$name | $value | "
+}
+Get-ChildItem -Path $apiDocsOutput -Filter '*.md' -Recurse | ForEach-Object {
+    $content = Get-Content -Path $_.FullName -Raw
+    [regex]::Replace($content, $fieldRowPattern, $fieldRowEvaluator) | Set-Content -Path $_.FullName -NoNewline
+}
+
+# xmldoc2md's "Inheritance A -> B -> C" line always ends with the current type linking to itself
+# (e.g. on busy.bar.accountbackend.md: "-> [AccountBackend](./busy.bar.accountbackend.md)") — a
+# link that just reloads the page you're already on. Strip that one self-referencing link per file
+# down to plain text; every other link on the page is left untouched.
+Write-Host "==> Removing self-referencing inheritance-chain links"
+Get-ChildItem -Path $apiDocsOutput -Filter '*.md' -Recurse | ForEach-Object {
+    $ownLinkPattern = "\[([^\]]+)\]\(\./$([regex]::Escape($_.BaseName))\.md\)"
+    (Get-Content -Path $_.FullName -Raw) -replace $ownLinkPattern, '$1' | Set-Content -Path $_.FullName -NoNewline
+}
+
 Write-Host "==> Done. API docs written to $apiDocsOutput"

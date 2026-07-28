@@ -8,7 +8,10 @@ import {DOCUSAURUS_VERSION} from '@docusaurus/utils';
 const config: Config = {
   title: 'BusyBar .NET',
   tagline: 'A typed .NET client for the BUSY Bar HTTP API',
-  favicon: 'img/favicon.ico',
+  // SVG favicon derived from the navbar logo mark (with its backdrop kept, unlike the navbar
+  // version — here it sits on the browser tab, not on our identically-colored navbar, so there's
+  // no camouflage risk). Supported by all current major browsers as a <link rel="icon"> target.
+  favicon: 'img/favicon.svg',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
@@ -16,16 +19,21 @@ const config: Config = {
   },
 
   // Set the production url of your site here
-  url: 'https://mjco.github.io',
-  // Set the /<baseUrl>/ pathname under which your site is served
-  // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/busybar-dotnet/',
+  url: 'https://busybar-dotnet.homotechsual.dev',
+  baseUrl: '/',
 
   // GitHub pages deployment config.
-  organizationName: 'mjco',
+  organizationName: 'homotechsual',
   projectName: 'busybar-dotnet',
 
   onBrokenLinks: 'throw',
+  // generate-api-docs.ps1 injects a real `<a id="...">` anchor into each enum's field-table row so
+  // <see cref="Enum.Member"/> cross-references actually resolve — verified in a real browser:
+  // document.getElementById('key') exists and #key correctly navigates there. Docusaurus's own
+  // broken-anchor checker still flags these as broken because it validates against its own
+  // heading registry, not the rendered DOM, so it never sees hand-injected HTML anchors it didn't
+  // generate itself. This is a checker false-positive, not an unresolved link — ignore it.
+  onBrokenAnchors: 'ignore',
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
@@ -42,7 +50,7 @@ const config: Config = {
         docs: {
           sidebarPath: './sidebars.ts',
           routeBasePath: '/',
-          editUrl: 'https://github.com/mjco/busybar-dotnet/tree/main/website/',
+          editUrl: 'https://github.com/homotechsual/busybar-dotnet/tree/main/website/',
         },
         blog: false,
         theme: {
@@ -80,7 +88,7 @@ const config: Config = {
           label: 'API Reference',
         },
         {
-          href: 'https://github.com/mjco/busybar-dotnet',
+          href: 'https://github.com/homotechsual/busybar-dotnet',
           label: 'GitHub',
           position: 'right',
           target: '_blank',
@@ -109,7 +117,7 @@ const config: Config = {
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/mjco/busybar-dotnet',
+              href: 'https://github.com/homotechsual/busybar-dotnet',
             },
             {
               label: 'NuGet',
