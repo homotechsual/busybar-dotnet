@@ -12,7 +12,14 @@
     <Description>A typed .NET client for the BUSY Bar HTTP API.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/homotechsual/busybar-dotnet</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://busybar-dotnet.homotechsual.dev</PackageProjectUrl>
+    <PackageTags>busybar;busy-bar;iot;http-client</PackageTags>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
 </Project>
