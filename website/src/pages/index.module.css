@@ -44,6 +44,20 @@
   }
 }
 
+.badges {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.badges img {
+  height: 28px;
+  display: block;
+}
+
 .buttons {
   display: flex;
   align-items: center;

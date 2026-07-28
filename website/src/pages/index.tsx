@@ -43,6 +43,20 @@ function HomepageHeader() {
           {siteConfig.title}
         </Heading>
         <p className="hero__subtitle">{siteConfig.tagline}</p>
+        <p className={styles.badges}>
+          <a href="https://github.com/homotechsual/busybar-dotnet/actions/workflows/ci.yml">
+            <img
+              src="https://img.shields.io/github/actions/workflow/status/homotechsual/busybar-dotnet/ci.yml?branch=main&style=for-the-badge&label=CI"
+              alt="CI status"
+            />
+          </a>
+          <a href="https://www.nuget.org/packages/BusyBar">
+            <img
+              src="https://img.shields.io/nuget/v/BusyBar?style=for-the-badge&label=NuGet"
+              alt="NuGet version"
+            />
+          </a>
+        </p>
         <div className={styles.buttons}>
           <Link className="button button--secondary button--lg" to="/intro">
             Get Started
