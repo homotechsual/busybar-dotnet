@@ -16,6 +16,7 @@ public sealed partial class BusyBar : IDisposable
     {
     }
 
+    /// <summary>Connects using the given options.</summary>
     public BusyBar(BusyBarOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
