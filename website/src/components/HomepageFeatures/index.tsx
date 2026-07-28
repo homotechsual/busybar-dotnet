@@ -43,11 +43,22 @@ const FeatureList: FeatureItem[] = [
       </>
     ),
   },
+  {
+    title: 'Validated on Real Hardware',
+    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    description: (
+      <>
+        Every namespace has been exercised against a physical BUSY Bar —
+        display draw, brightness, LED notifications, and more — not just
+        synthetic fixtures.
+      </>
+    ),
+  },
 ];
 
 function Feature({title, Svg, description}: FeatureItem) {
   return (
-    <div className={clsx('col col--4')}>
+    <div className={clsx('col col--3')}>
       <div className="text--center">
         <Svg className={styles.featureSvg} role="img" />
       </div>

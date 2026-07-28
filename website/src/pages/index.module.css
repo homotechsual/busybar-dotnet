@@ -16,8 +16,44 @@
   }
 }
 
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+  opacity: 0.85;
+  margin-bottom: 0.5rem;
+}
+
+.statusDot {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: currentColor;
+  animation: heroStatusPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes heroStatusPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
 .buttons {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.quickLook {
+  padding: 3rem 0;
+}
+
+.quickLook .row {
+  align-items: center;
 }
