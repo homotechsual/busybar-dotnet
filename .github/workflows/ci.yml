@@ -8,8 +8,6 @@ on:
 
 permissions:
   contents: read
-  code-quality: write
-  pull-requests: read
 
 jobs:
   build:
@@ -41,9 +39,9 @@ jobs:
           file=$(find ./TestResults -name '*.cobertura.xml' -print -quit)
           echo "file=$file" >> "$GITHUB_OUTPUT"
 
-      - name: Upload code coverage
-        uses: actions/upload-code-coverage@v1
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
         with:
-          file: ${{ steps.coverage.outputs.file }}
-          language: CSharp
-          label: code-coverage/busybar
+          files: ${{ steps.coverage.outputs.file }}
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
