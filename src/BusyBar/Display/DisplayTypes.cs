@@ -53,6 +53,13 @@ public enum RectangleFill
     [JsonStringEnumMemberName("gradient_v")] GradientV
 }
 
+/// <summary>
+/// Unlike <see cref="BusyTimerSettings"/>/<see cref="BusySnapshotState"/>/<see cref="StorageListElement"/>,
+/// this library only ever serializes <see cref="DisplayElement"/> (as part of an outgoing
+/// <see cref="DisplayDrawParams"/>) — no BUSY Bar endpoint returns display elements back to the client, so
+/// System.Text.Json's discriminator-must-be-first constraint (which only applies to deserialization) never
+/// applies here.
+/// </summary>
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
 [JsonDerivedType(typeof(TextElement), "text")]
 [JsonDerivedType(typeof(ImageElement), "image")]

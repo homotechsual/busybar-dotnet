@@ -2,6 +2,14 @@ using System.Text.Json.Serialization;
 
 namespace Busy.Bar;
 
+/// <summary>
+/// System.Text.Json's polymorphic deserialization requires the "type" discriminator to be the first
+/// property in the JSON object, or it throws <see cref="NotSupportedException"/>. Confirmed against a
+/// real BUSY Bar device (see <c>RealDeviceFixtureTests</c>) that "type" is always first for both
+/// <see cref="BusyTimerSettings"/> and <see cref="BusySnapshotState"/> payloads, across
+/// GET /busy/snapshot, GET /busy/profiles/{slot}, and multiple discriminator values
+/// (NOT_STARTED, INTERVAL) — treated as a confirmed assumption, not a theoretical risk.
+/// </summary>
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
 [JsonDerivedType(typeof(BusyTimerInfiniteSettings), "INFINITE")]
 [JsonDerivedType(typeof(BusyTimerSimpleSettings), "SIMPLE")]
@@ -25,6 +33,8 @@ public sealed record BusyTimerIntervalSettings : BusyTimerSettings
 
 public sealed record BusyBarSettings(string Theme, bool ShowWorkPhaseOnly, bool TriggerSmartHome);
 
+/// <summary>See the discriminator-ordering note on <see cref="BusyTimerSettings"/> — the same confirmed
+/// assumption applies here.</summary>
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
 [JsonDerivedType(typeof(BusySnapshotNotStarted), "NOT_STARTED")]
 [JsonDerivedType(typeof(BusySnapshotInfinite), "INFINITE")]

@@ -78,4 +78,63 @@ public class RealDeviceFixtureTests
         // which marks it required) — confirming StatusFirmware.IntercomVersion must be nullable, not required.
         Assert.Null(firmware.IntercomVersion);
     }
+
+    /// <summary>
+    /// Confirms, against real hardware, that System.Text.Json's polymorphic deserialization constraint
+    /// (the "type" discriminator must be the first JSON property) actually holds for every
+    /// <see cref="BusySnapshotState"/> payload the device sends — not just our own synthetic fixtures.
+    /// </summary>
+    [Fact]
+    public void BusySnapshot_DeserializesRealDevicePayload_NotStarted()
+    {
+        const string json = """
+        {"snapshot":{"type":"NOT_STARTED","busy_bar_settings":{"theme":"","show_work_phase_only":false,"trigger_smart_home":false}},"snapshot_timestamp_ms":1785222074566}
+        """;
+
+        var snapshot = JsonSerializer.Deserialize<BusySnapshot>(json, BusyBarTransport.JsonOptions)!;
+
+        var notStarted = Assert.IsType<BusySnapshotNotStarted>(snapshot.Snapshot);
+        Assert.Equal("", notStarted.BusyBarSettings!.Theme);
+        Assert.Equal(1785222074566, snapshot.SnapshotTimestampMs);
+    }
+
+    /// <summary>
+    /// Confirms, against real hardware, that "type" is first for <see cref="BusyTimerSettings"/> too
+    /// (a second, independent polymorphic hierarchy from <see cref="BusySnapshotState"/>), nested inside
+    /// a <see cref="BusyProfile"/> response.
+    /// </summary>
+    [Fact]
+    public void BusyProfile_DeserializesRealDevicePayload_IntervalTimerSettings()
+    {
+        const string json = """
+        {"sort_order":0,"title":"BUSY","id":"00000000-0000-0000-0000-000000000000","timer_settings":{"type":"INTERVAL","interval_work_ms":1200000,"interval_rest_ms":300000,"interval_work_cycles_count":3,"is_autostart_enabled":false},"busy_bar_settings":{"theme":"","show_work_phase_only":false,"trigger_smart_home":false},"profile_timestamp_ms":1785150188585}
+        """;
+
+        var profile = JsonSerializer.Deserialize<BusyProfile>(json, BusyBarTransport.JsonOptions)!;
+
+        var interval = Assert.IsType<BusyTimerIntervalSettings>(profile.TimerSettings);
+        Assert.Equal(1200000, interval.IntervalWorkMs);
+        Assert.Equal(3, interval.IntervalWorkCyclesCount);
+    }
+
+    /// <summary>
+    /// Confirms, against real hardware, that "type" is first for <see cref="StorageListElement"/> too — the
+    /// third independent polymorphic hierarchy in this library — across a real mixed file/dir listing.
+    /// </summary>
+    [Fact]
+    public void StorageList_DeserializesRealDevicePayload_MixedFilesAndDirs()
+    {
+        const string json = """
+        {"list":[{"type":"file","name":".sys_update.txt","size":31},{"type":"dir","name":"apps_data"},{"type":"dir","name":"update"},{"type":"dir","name":"apps_assets"},{"type":"file","name":"Manifest","size":36625},{"type":"dir","name":"user_assets"}]}
+        """;
+
+        var list = JsonSerializer.Deserialize<StorageList>(json, BusyBarTransport.JsonOptions)!;
+
+        Assert.Equal(6, list.List.Count);
+        var manifest = Assert.IsType<StorageFileElement>(list.List[4]);
+        Assert.Equal("Manifest", manifest.Name);
+        Assert.Equal(36625, manifest.Size);
+        var userAssets = Assert.IsType<StorageDirElement>(list.List[5]);
+        Assert.Equal("user_assets", userAssets.Name);
+    }
 }
