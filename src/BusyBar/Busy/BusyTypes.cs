@@ -7,7 +7,7 @@ namespace Busy.Bar;
 /// property in the JSON object, or it throws <see cref="NotSupportedException"/>. Confirmed against a
 /// real BUSY Bar device (see <c>RealDeviceFixtureTests</c>) that "type" is always first for both
 /// <see cref="BusyTimerSettings"/> and <see cref="BusySnapshotState"/> payloads, across
-/// GET /busy/snapshot, GET /busy/profiles/{slot}, and multiple discriminator values
+/// <c>GET /busy/snapshot</c>, <c>GET /busy/profiles/{slot}</c>, and multiple discriminator values
 /// (NOT_STARTED, INTERVAL) — treated as a confirmed assumption, not a theoretical risk.
 /// </summary>
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
