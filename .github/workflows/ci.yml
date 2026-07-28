@@ -43,5 +43,6 @@ jobs:
         uses: codecov/codecov-action@v7
         with:
           files: ${{ steps.coverage.outputs.file }}
+          disable_search: true
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
