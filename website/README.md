@@ -1,43 +1,38 @@
-# Website
+# website
 
-This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
+The BusyBar .NET docs site, built with [Docusaurus](https://docusaurus.io/). Deployed to
+[busybar-dotnet.homotechsual.dev](https://busybar-dotnet.homotechsual.dev) via Cloudflare Pages
+(see `../.github/workflows/deploy-docs.yml`).
 
-## Installation
+Uses [Yarn](https://yarnpkg.com/) (pinned via Corepack — see `packageManager` in `package.json`),
+not npm.
 
-```bash
-npm install
-```
-
-**Note**: feel free to use the package manager of your choice.
-
-## Local Development
+## Install
 
 ```bash
-npm run start
+corepack enable
+yarn install
 ```
 
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+## Local development
+
+```bash
+yarn start
+```
+
+Starts a local dev server and opens a browser window. Most changes reload live.
 
 ## Build
 
-```bash
-npm run build
-```
-
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
-
-## Deployment
-
-Using SSH:
+The API Reference section (`docs/api/`) is generated from the `BusyBar` library's XML doc
+comments — see `../scripts/generate-api-docs.ps1` — and is gitignored, not committed. Regenerate
+it before building if the library's public API or doc comments changed:
 
 ```bash
-USE_SSH=true npm run deploy
+yarn generate-api-docs   # builds the library in Release, then runs xmldoc2md
+yarn build               # builds the Docusaurus site
+# or, in one step:
+yarn build:full
 ```
 
-Not using SSH:
-
-```bash
-GIT_USER=<Your GitHub username> npm run deploy
-```
-
-If you are using GitHub Pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+Static output goes to `build/`.
