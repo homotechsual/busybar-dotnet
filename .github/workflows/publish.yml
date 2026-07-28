@@ -1,8 +1,9 @@
 name: Publish
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - 'v*.*.*'
 
 permissions:
   contents: read
@@ -21,11 +22,11 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
-      - name: Resolve package version from release tag
+      - name: Resolve package version from tag
         id: version
         shell: bash
         run: |
-          tag="${{ github.event.release.tag_name }}"
+          tag="${{ github.ref_name }}"
           echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
 
       - name: Restore
@@ -49,11 +50,11 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
-      - name: Resolve package version from release tag
+      - name: Resolve package version from tag
         id: version
         shell: bash
         run: |
-          tag="${{ github.event.release.tag_name }}"
+          tag="${{ github.ref_name }}"
           echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
 
       - name: Restore
