@@ -1,16 +1,12 @@
 using Busy.Bar;
 
-// The BUSY Bar's LED matrix is 72x16 pixels. `Align` anchors the ELEMENT's own bounding box
-// (its center, an edge, or a corner, depending on the align value) at (X, Y) — it does NOT
-// automatically center the element within the canvas. To actually center something on screen,
-// X/Y must be set to the canvas's own center point. Left at their default of (0, 0), an
-// Align.Center element gets its center pinned to the canvas's top-left corner, pushing roughly
-// half of it off-screen up and to the left. (Confirmed live: this is exactly what happened when
-// this sample first shipped without CanvasCenterX/Y below.)
-const int CanvasWidth = 72;
-const int CanvasHeight = 16;
-const int CanvasCenterX = CanvasWidth / 2;
-const int CanvasCenterY = CanvasHeight / 2;
+// `Align` anchors the ELEMENT's own bounding box (its center, an edge, or a corner, depending on
+// the align value) at (X, Y) — it does NOT automatically center the element within the canvas.
+// Left at their default of (0, 0), an Align.Center element gets its center pinned to the canvas's
+// top-left corner, pushing roughly half of it off-screen. (Confirmed live: this is exactly what
+// happened when this sample first shipped without DisplayCanvas.Center below.) Use
+// DisplayCanvas.Center/AnchorFor to compute the right X/Y for a given alignment.
+var (canvasCenterX, canvasCenterY) = DisplayCanvas.Center;
 
 // DisplayDrawAsync is ADDITIVE, not a canvas replace: elements from a previous draw call persist
 // on screen (keyed by their own Id within an ApplicationName) until you either reuse the same Id
@@ -55,8 +51,8 @@ switch (action)
                     Text = "Hello!",
                     Font = TextFont.Normal,
                     Align = ElementAlign.Center,
-                    X = CanvasCenterX,
-                    Y = CanvasCenterY,
+                    X = canvasCenterX,
+                    Y = canvasCenterY,
                     Color = "#00FF00FF",
                 }
             }
@@ -90,8 +86,8 @@ switch (action)
                     Text = "HELLO",
                     Font = TextFont.Small,
                     Align = ElementAlign.Center,
-                    X = CanvasCenterX,
-                    Y = CanvasCenterY,
+                    X = canvasCenterX,
+                    Y = canvasCenterY,
                     Color = "#FFFFFFFF",
                 }
             }
@@ -113,8 +109,8 @@ switch (action)
                     Font = TextFont.Normal,
                     Align = ElementAlign.MidLeft,
                     X = 0,
-                    Y = CanvasCenterY,
-                    Width = CanvasWidth,
+                    Y = canvasCenterY,
+                    Width = DisplayCanvas.Width,
                     ScrollRate = 8000,
                     ScrollStartDelay = 300,
                     ScrollRepeatDelay = 300,
@@ -140,8 +136,8 @@ switch (action)
                     Direction = CountdownDirection.TimeLeft,
                     ShowHours = ShowHours.WhenNonZero,
                     Align = ElementAlign.Center,
-                    X = CanvasCenterX,
-                    Y = CanvasCenterY,
+                    X = canvasCenterX,
+                    Y = canvasCenterY,
                     Color = "#00FFFFFF",
                 }
             }
@@ -163,8 +159,8 @@ switch (action)
                     Text = "LED",
                     Font = TextFont.Normal,
                     Align = ElementAlign.Center,
-                    X = CanvasCenterX,
-                    Y = CanvasCenterY,
+                    X = canvasCenterX,
+                    Y = canvasCenterY,
                     Color = "#FFFFFFFF",
                 }
             }
@@ -197,8 +193,8 @@ switch (action)
                     Font = TextFont.Normal,
                     Align = ElementAlign.MidLeft,
                     X = 0,
-                    Y = CanvasCenterY,
-                    Width = CanvasWidth,
+                    Y = canvasCenterY,
+                    Width = DisplayCanvas.Width,
                     ScrollRate = 8000,
                     ScrollStartDelay = 300,
                     ScrollRepeatDelay = 300,
