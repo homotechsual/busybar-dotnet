@@ -39,7 +39,10 @@ public sealed record StatusFirmware
     public required string Branch { get; init; }
     public required string BuildDate { get; init; }
     public required string CommitHash { get; init; }
-    public required string IntercomVersion { get; init; }
+    // Nullable (not `required`): confirmed against a real physical device (firmware 1.0.2) that "intercom_version"
+    // is absent from the local device's /api/status/firmware response entirely, despite the vendored cloud-proxy
+    // OpenAPI spec marking it required. See RealDeviceFixtureTests for the captured payload this guards against.
+    public string? IntercomVersion { get; init; }
     public string? NwpVersion { get; init; }
     public string? MatterVersion { get; init; }
 }

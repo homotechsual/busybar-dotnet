@@ -7,11 +7,11 @@ namespace BusyBar.Tests.Internal;
 
 public class BusyBarTransportTests
 {
-    private static (BusyBarTransport transport, FakeHttpMessageHandler handler) CreateTransport(TimeSpan? defaultTimeout = null)
+    private static (BusyBarTransport transport, FakeHttpMessageHandler handler) CreateTransport(TimeSpan? defaultTimeout = null, bool isCloud = false)
     {
         var handler = new FakeHttpMessageHandler();
         var http = new HttpClient(handler) { BaseAddress = new Uri("http://10.0.4.20/") };
-        return (new BusyBarTransport(http, defaultTimeout ?? TimeSpan.FromSeconds(3)), handler);
+        return (new BusyBarTransport(http, defaultTimeout ?? TimeSpan.FromSeconds(3), isCloud), handler);
     }
 
     [Fact]
@@ -25,7 +25,7 @@ public class BusyBarTransportTests
             query: new Dictionary<string, string?> { ["value"] = "50" });
 
         Assert.Equal("OK", result.Result);
-        Assert.EndsWith("busybar/name?value=50", handler.LastRequest!.RequestUri!.ToString());
+        Assert.EndsWith("name?value=50", handler.LastRequest!.RequestUri!.ToString());
     }
 
     [Fact]
@@ -193,6 +193,30 @@ public class BusyBarTransportTests
                 query: new Dictionary<string, string?> { ["mode"] = "key", ["key"] = secretKey }));
 
         Assert.DoesNotContain(secretKey, exception.Message);
-        Assert.Contains("busybar/access", exception.Message);
+        Assert.Contains("access", exception.Message);
+    }
+
+    [Fact]
+    public async Task SendJsonAsync_IsCloudTrue_PreservesBusybarPrefix()
+    {
+        var (transport, handler) = CreateTransport(isCloud: true);
+        handler.ResponseBody = "{\"result\":\"OK\"}";
+
+        await transport.SendJsonAsync<SuccessResponse>(HttpMethod.Get, "busybar/version");
+
+        Assert.EndsWith("busybar/version", handler.LastRequest!.RequestUri!.ToString());
+    }
+
+    [Fact]
+    public async Task SendJsonAsync_IsCloudFalse_StripsBusybarPrefix()
+    {
+        var (transport, handler) = CreateTransport(isCloud: false);
+        handler.ResponseBody = "{\"result\":\"OK\"}";
+
+        await transport.SendJsonAsync<SuccessResponse>(HttpMethod.Get, "busybar/version");
+
+        var requestUri = handler.LastRequest!.RequestUri!.ToString();
+        Assert.EndsWith("version", requestUri);
+        Assert.DoesNotContain("busybar", requestUri);
     }
 }

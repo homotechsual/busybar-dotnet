@@ -16,13 +16,15 @@ internal sealed class BusyBarTransport
 
     private readonly HttpClient _http;
     private readonly TimeSpan _defaultTimeout;
+    private readonly bool _isCloud;
     private string? _token;
     private string? _httpAccessPassword;
 
-    internal BusyBarTransport(HttpClient http, TimeSpan defaultTimeout)
+    internal BusyBarTransport(HttpClient http, TimeSpan defaultTimeout, bool isCloud)
     {
         _http = http;
         _defaultTimeout = defaultTimeout;
+        _isCloud = isCloud;
     }
 
     internal void SetToken(string? token) => _token = token;
@@ -165,7 +167,8 @@ internal sealed class BusyBarTransport
     {
         var baseUri = _http.BaseAddress
             ?? throw new InvalidOperationException("BusyBar HttpClient has no BaseAddress configured.");
-        var uri = new Uri(baseUri, path);
+        var effectivePath = _isCloud ? path : StripCloudPathPrefix(path);
+        var uri = new Uri(baseUri, effectivePath);
         if (query is not { Count: > 0 }) return uri;
 
         var parts = new List<string>();
@@ -175,6 +178,18 @@ internal sealed class BusyBarTransport
             parts.Add($"{Uri.EscapeDataString(key)}={Uri.EscapeDataString(value)}");
         }
         return new UriBuilder(uri) { Query = string.Join('&', parts) }.Uri;
+    }
+
+    /// <summary>
+    /// Every path constant in this library is written in the cloud proxy's form (e.g. "busybar/status"),
+    /// matching the vendored OpenAPI spec. A local device (USB/LAN) mounts the same endpoint under its own
+    /// "/api/" base with this segment stripped entirely — confirmed against physical hardware. See
+    /// <see cref="BusyBar.BuildBaseAddress"/> for the corresponding base-address handling.
+    /// </summary>
+    private static string StripCloudPathPrefix(string path)
+    {
+        const string cloudPrefix = "busybar/";
+        return path.StartsWith(cloudPrefix, StringComparison.Ordinal) ? path[cloudPrefix.Length..] : path;
     }
 
     private void ApplyAuth(HttpRequestMessage request)

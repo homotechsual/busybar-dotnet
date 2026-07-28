@@ -45,6 +45,6 @@ public class BleTests
         await bar.BlePairingRemoveAsync();
 
         Assert.Equal(HttpMethod.Delete, handler.LastRequest!.Method);
-        Assert.EndsWith("busybar/ble/pairing", handler.LastRequest.RequestUri!.ToString());
+        Assert.EndsWith("ble/pairing", handler.LastRequest.RequestUri!.ToString());
     }
 }

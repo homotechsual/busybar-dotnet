@@ -67,7 +67,7 @@ public class BusyTimerTests
 
         var profile = await bar.BusyProfileGetAsync(BusyProfileSlot.Custom);
 
-        Assert.EndsWith("busybar/busy/profiles/custom", handler.LastRequest!.RequestUri!.ToString());
+        Assert.EndsWith("busy/profiles/custom", handler.LastRequest!.RequestUri!.ToString());
         Assert.Equal("study", profile.Title);
         var simple = Assert.IsType<BusyTimerSimpleSettings>(profile.TimerSettings);
         Assert.Equal(300000, simple.TotalTimeMs);

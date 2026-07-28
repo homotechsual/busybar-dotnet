@@ -53,7 +53,7 @@ public class BusyBarCoreTests
             .GetField("_http", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!
             .GetValue(bar)!;
 
-        Assert.Equal("http://10.0.4.20/", http.BaseAddress!.ToString());
+        Assert.Equal("http://10.0.4.20/api/", http.BaseAddress!.ToString());
     }
 
     [Fact]
@@ -75,6 +75,32 @@ public class BusyBarCoreTests
             .GetField("_http", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!
             .GetValue(bar)!;
 
-        Assert.Equal("https://example.com/", http.BaseAddress!.ToString());
+        Assert.Equal("https://example.com/api/", http.BaseAddress!.ToString());
+    }
+
+    [Fact]
+    public async Task CloudHost_PreservesFullBusybarPathInRequest()
+    {
+        var handler = new FakeHttpMessageHandler { ResponseBody = "{\"api_semver\":\"24.3.0\"}" };
+        using var httpClient = new HttpClient(handler) { BaseAddress = new Uri("https://api.busy.app/") };
+        using var bar = new Busy.Bar.BusyBar(httpClient, new Busy.Bar.BusyBarOptions { Token = "t" });
+
+        await bar.SystemVersionGetAsync();
+
+        Assert.Contains("busybar/version", handler.LastRequest!.RequestUri!.ToString());
+    }
+
+    [Fact]
+    public async Task LocalHost_StripsBusybarPrefixFromRequest()
+    {
+        var handler = new FakeHttpMessageHandler { ResponseBody = "{\"api_semver\":\"24.3.0\"}" };
+        using var httpClient = new HttpClient(handler) { BaseAddress = new Uri("http://10.0.4.20/api/") };
+        using var bar = new Busy.Bar.BusyBar(httpClient, new Busy.Bar.BusyBarOptions());
+
+        await bar.SystemVersionGetAsync();
+
+        var requestUri = handler.LastRequest!.RequestUri!.ToString();
+        Assert.Contains("api/version", requestUri);
+        Assert.DoesNotContain("busybar", requestUri);
     }
 }

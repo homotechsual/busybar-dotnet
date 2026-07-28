@@ -22,7 +22,7 @@ public class UpdateTests
 
         await bar.UpdateFirmwareAsync(tar);
 
-        Assert.EndsWith("busybar/update", handler.LastRequest!.RequestUri!.ToString());
+        Assert.EndsWith("update", handler.LastRequest!.RequestUri!.ToString());
         Assert.Equal("application/octet-stream", handler.LastRequest.Content!.Headers.ContentType!.MediaType);
     }
 

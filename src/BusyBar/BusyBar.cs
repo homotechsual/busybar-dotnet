@@ -28,7 +28,7 @@ public sealed partial class BusyBar : IDisposable
         // cap any per-call timeout configured above 100 seconds.
         _http.Timeout = System.Threading.Timeout.InfiniteTimeSpan;
         _ownsHttpClient = true;
-        _transport = new Internal.BusyBarTransport(_http, options.Timeout);
+        _transport = new Internal.BusyBarTransport(_http, options.Timeout, IsCloudHost(_http.BaseAddress!));
         ApplyInitialAuth(options);
     }
 
@@ -47,7 +47,7 @@ public sealed partial class BusyBar : IDisposable
         httpClient.BaseAddress ??= BuildBaseAddress(options.Addr);
         _http = httpClient;
         _ownsHttpClient = false;
-        _transport = new Internal.BusyBarTransport(_http, options.Timeout);
+        _transport = new Internal.BusyBarTransport(_http, options.Timeout, IsCloudHost(_http.BaseAddress!));
         ApplyInitialAuth(options);
     }
 
@@ -71,18 +71,37 @@ public sealed partial class BusyBar : IDisposable
         if (_ownsHttpClient) _http.Dispose();
     }
 
+    /// <summary>
+    /// Resolves the given address to a base <see cref="Uri"/>, appending the device's fixed API mount point.
+    /// Note: if <paramref name="addr"/> is a full URL with a path (e.g. "http://192.168.1.5:8080/somepath"), that
+    /// path is deliberately discarded — the device's API mount point is fixed by the device itself, not
+    /// caller-configurable.
+    /// </summary>
     private static Uri BuildBaseAddress(string addr)
     {
+        string authority;
         if (Uri.TryCreate(addr, UriKind.Absolute, out var absolute)
             && (absolute.Scheme == Uri.UriSchemeHttp || absolute.Scheme == Uri.UriSchemeHttps))
         {
-            return EnsureTrailingSlash(absolute);
+            authority = absolute.GetLeftPart(UriPartial.Authority);
+        }
+        else
+        {
+            var scheme = addr.Equals("api.busy.app", StringComparison.OrdinalIgnoreCase) ? "https" : "http";
+            authority = $"{scheme}://{addr}";
         }
 
-        var scheme = addr.Equals("api.busy.app", StringComparison.OrdinalIgnoreCase) ? "https" : "http";
-        return EnsureTrailingSlash(new Uri($"{scheme}://{addr}"));
+        var isCloud = IsCloudHost(new Uri(authority));
+        var pathSuffix = isCloud ? "/" : "/api/";
+        return new Uri(authority + pathSuffix);
     }
 
-    private static Uri EnsureTrailingSlash(Uri uri)
-        => uri.AbsoluteUri.EndsWith('/') ? uri : new Uri(uri.AbsoluteUri + "/");
+    /// <summary>
+    /// True only for the BUSY Cloud proxy host. The vendored OpenAPI spec's paths (e.g. "busybar/status")
+    /// describe that proxy's namespace; a local device (USB or LAN) mounts the same endpoints directly under
+    /// its own "/api/" base with the "busybar/" segment stripped — confirmed against physical hardware. See
+    /// <see cref="Internal.BusyBarTransport"/>'s path handling, which strips that segment for local hosts.
+    /// </summary>
+    private static bool IsCloudHost(Uri baseAddress) =>
+        baseAddress.Host.Equals("api.busy.app", StringComparison.OrdinalIgnoreCase);
 }

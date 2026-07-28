@@ -21,7 +21,7 @@ public class AccountTests
 
         var info = await bar.AccountInfoGetAsync();
 
-        Assert.EndsWith("busybar/account/info", handler.LastRequest!.RequestUri!.ToString());
+        Assert.EndsWith("account/info", handler.LastRequest!.RequestUri!.ToString());
         Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
         Assert.True(info.Linked);
         Assert.Equal("a@b.com", info.Email);
@@ -46,7 +46,7 @@ public class AccountTests
 
         var backend = await bar.AccountBackendGetAsync();
 
-        Assert.EndsWith("busybar/account/backend", handler.LastRequest!.RequestUri!.ToString());
+        Assert.EndsWith("account/backend", handler.LastRequest!.RequestUri!.ToString());
         Assert.Equal("default", backend.ServerUrl);
         Assert.Equal(ClientCertType.Custom, backend.ClientCertType);
     }
