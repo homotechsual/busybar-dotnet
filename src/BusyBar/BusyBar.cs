@@ -64,6 +64,20 @@ public sealed partial class BusyBar : IDisposable
     /// <summary>Sets or replaces the LAN HTTP access password at runtime.</summary>
     public void SetHttpAccessPassword(string password) => _transport.SetHttpAccessPassword(password);
 
+    /// <summary>
+    /// Calls an arbitrary BUSY Bar HTTP API endpoint and deserializes its JSON response as
+    /// <typeparamref name="TResponse"/>. Goes through the exact same auth, base-address resolution,
+    /// timeout/cancellation, and error handling (<see cref="BusyBarApiException"/> on a non-2xx response) as
+    /// every typed method on this class — it's an escape hatch for endpoints this library doesn't wrap yet
+    /// (e.g. a newer firmware feature), not a bypass of that machinery. <paramref name="path"/> follows the
+    /// same convention as every other call: write it in the cloud proxy's form (e.g. <c>"busybar/status"</c>)
+    /// regardless of whether you're actually talking to a local device or the cloud proxy.
+    /// </summary>
+    public Task<TResponse> InvokeAsync<TResponse>(
+        HttpMethod method, string path, IReadOnlyDictionary<string, string?>? query = null,
+        object? jsonBody = null, RequestOptions? options = null, CancellationToken cancellationToken = default)
+        => _transport.SendJsonAsync<TResponse>(method, path, query, jsonBody, options, cancellationToken);
+
     /// <summary>Disposes the underlying <see cref="HttpClient"/>, but only if this instance created it
     /// (the <see cref="BusyBar(BusyBarOptions)"/> overload) — a caller-supplied client
     /// (<see cref="BusyBar(HttpClient, BusyBarOptions)"/>) is left untouched.</summary>

@@ -152,4 +152,49 @@ public class BusyBarCoreTests
         Assert.Contains("api/version", requestUri);
         Assert.DoesNotContain("busybar", requestUri);
     }
+
+    [Fact]
+    public async Task InvokeAsync_SendsRequestAndDeserializesResponse()
+    {
+        var handler = new FakeHttpMessageHandler { ResponseBody = "{\"api_semver\":\"24.3.0\"}" };
+        using var httpClient = new HttpClient(handler) { BaseAddress = new Uri("http://10.0.4.20/") };
+        using var bar = new Busy.Bar.BusyBar(httpClient, new Busy.Bar.BusyBarOptions());
+
+        var result = await bar.InvokeAsync<Busy.Bar.VersionInfo>(HttpMethod.Get, "busybar/version");
+
+        Assert.Equal("24.3.0", result.ApiSemver);
+        Assert.Equal(HttpMethod.Get, handler.LastRequest!.Method);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_SendsQueryAndJsonBody()
+    {
+        var handler = new FakeHttpMessageHandler { ResponseBody = "{\"result\":\"OK\"}" };
+        using var httpClient = new HttpClient(handler) { BaseAddress = new Uri("http://10.0.4.20/") };
+        using var bar = new Busy.Bar.BusyBar(httpClient, new Busy.Bar.BusyBarOptions());
+
+        var result = await bar.InvokeAsync<Busy.Bar.SuccessResponse>(
+            HttpMethod.Post, "busybar/name",
+            query: new Dictionary<string, string?> { ["value"] = "50" },
+            jsonBody: new { DeviceName = "My Bar" });
+
+        Assert.Equal("OK", result.Result);
+        Assert.EndsWith("name?value=50", handler.LastRequest!.RequestUri!.ToString());
+        Assert.Contains("\"device_name\":\"My Bar\"", handler.LastRequestBody);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_AllowsPathNotFollowingTheBusybarConvention()
+    {
+        // Every path constant this library ships with follows the "busybar/..." convention (see
+        // BusyBarTransport.StripCloudPathPrefix), but InvokeAsync is an escape hatch for endpoints this
+        // library doesn't know about yet — it must work with an arbitrary path too.
+        var handler = new FakeHttpMessageHandler { ResponseBody = "{\"result\":\"OK\"}" };
+        using var httpClient = new HttpClient(handler) { BaseAddress = new Uri("http://10.0.4.20/api/") };
+        using var bar = new Busy.Bar.BusyBar(httpClient, new Busy.Bar.BusyBarOptions());
+
+        await bar.InvokeAsync<Busy.Bar.SuccessResponse>(HttpMethod.Get, "diagnostics/ping");
+
+        Assert.EndsWith("api/diagnostics/ping", handler.LastRequest!.RequestUri!.ToString());
+    }
 }
