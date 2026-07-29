@@ -197,4 +197,18 @@ public class BusyBarCoreTests
 
         Assert.EndsWith("api/diagnostics/ping", handler.LastRequest!.RequestUri!.ToString());
     }
+
+    [Fact]
+    public async Task InvokeAsync_ThrowsInvalidOperationException_WhenSharedHttpClientsBaseAddressClearedAfterConstruction()
+    {
+        // The (HttpClient, BusyBarOptions) overload keeps a live reference to the caller's own HttpClient rather
+        // than copying it — nothing stops the caller from nulling out its BaseAddress afterwards.
+        var handler = new FakeHttpMessageHandler();
+        using var httpClient = new HttpClient(handler) { BaseAddress = new Uri("http://10.0.4.20/") };
+        using var bar = new Busy.Bar.BusyBar(httpClient, new Busy.Bar.BusyBarOptions());
+        httpClient.BaseAddress = null;
+
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => bar.InvokeAsync<Busy.Bar.SuccessResponse>(HttpMethod.Get, "busybar/version"));
+    }
 }
