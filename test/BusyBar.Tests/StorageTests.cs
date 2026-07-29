@@ -53,6 +53,30 @@ public class StorageTests
     }
 
     [Fact]
+    public async Task StorageRemoveAsync_SendsDeleteWithPathQuery()
+    {
+        var (bar, handler) = CreateClient();
+        handler.ResponseBody = "{\"result\":\"OK\"}";
+
+        await bar.StorageRemoveAsync(new StorageRemoveParams("/ext/test.png"));
+
+        Assert.Equal(HttpMethod.Delete, handler.LastRequest!.Method);
+        Assert.Contains("path=%2Fext%2Ftest.png", handler.LastRequest.RequestUri!.Query);
+    }
+
+    [Fact]
+    public async Task StorageMkdirAsync_SendsPostWithPathQuery()
+    {
+        var (bar, handler) = CreateClient();
+        handler.ResponseBody = "{\"result\":\"OK\"}";
+
+        await bar.StorageMkdirAsync(new StorageMkdirParams("/ext/newdir"));
+
+        Assert.Equal(HttpMethod.Post, handler.LastRequest!.Method);
+        Assert.Contains("path=%2Fext%2Fnewdir", handler.LastRequest.RequestUri!.Query);
+    }
+
+    [Fact]
     public async Task StorageRenameAsync_SendsBothPathQueryParams()
     {
         var (bar, handler) = CreateClient();

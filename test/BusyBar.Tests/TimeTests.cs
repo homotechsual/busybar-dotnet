@@ -36,6 +36,29 @@ public class TimeTests
     }
 
     [Fact]
+    public async Task TimeTimezoneGetAsync_ParsesTimezoneInfo()
+    {
+        var (bar, handler) = CreateClient();
+        handler.ResponseBody = "{\"name\":\"Bangalore\",\"offset\":\"+05:30\",\"abbr\":\"IST\"}";
+
+        var info = await bar.TimeTimezoneGetAsync();
+
+        Assert.Equal("Bangalore", info.Name);
+        Assert.Equal("IST", info.Abbr);
+    }
+
+    [Fact]
+    public async Task TimeTimezoneSetAsync_SendsTimezoneQueryParam()
+    {
+        var (bar, handler) = CreateClient();
+        handler.ResponseBody = "{\"result\":\"OK\"}";
+
+        await bar.TimeTimezoneSetAsync(new TimeSetTimezoneParams("Bangalore"));
+
+        Assert.Contains("timezone=Bangalore", handler.LastRequest!.RequestUri!.Query);
+    }
+
+    [Fact]
     public async Task TimeTzlistGetAsync_ParsesListOfTimezones()
     {
         var (bar, handler) = CreateClient();

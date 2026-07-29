@@ -72,4 +72,26 @@ public class BusyTimerTests
         var simple = Assert.IsType<BusyTimerSimpleSettings>(profile.TimerSettings);
         Assert.Equal(300000, simple.TotalTimeMs);
     }
+
+    [Fact]
+    public async Task BusyProfileSetAsync_BuildsPathWithSlotAndSerializesProfile()
+    {
+        var (bar, handler) = CreateClient();
+        handler.ResponseBody = "{\"result\":\"OK\"}";
+        var profile = new BusyProfile
+        {
+            SortOrder = -1,
+            Title = "study",
+            Id = "00000000-0000-0000-0000-000000000000",
+            TimerSettings = new BusyTimerSimpleSettings { TotalTimeMs = 300000 },
+            BusyBarSettings = new BusyBarSettings("on_air", false, true),
+            ProfileTimestampMs = 1761582532251
+        };
+
+        await bar.BusyProfileSetAsync(BusyProfileSlot.Custom, profile);
+
+        Assert.Equal(HttpMethod.Put, handler.LastRequest!.Method);
+        Assert.EndsWith("busy/profiles/custom", handler.LastRequest.RequestUri!.ToString());
+        Assert.Contains("\"title\":\"study\"", handler.LastRequestBody);
+    }
 }

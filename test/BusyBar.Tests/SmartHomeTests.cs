@@ -38,6 +38,30 @@ public class SmartHomeTests
     }
 
     [Fact]
+    public async Task SmartHomePairingEraseAsync_SendsDelete()
+    {
+        var (bar, handler) = CreateClient();
+        handler.ResponseBody = "{\"result\":\"OK\"}";
+
+        await bar.SmartHomePairingEraseAsync();
+
+        Assert.Equal(HttpMethod.Delete, handler.LastRequest!.Method);
+        Assert.EndsWith("smart_home/pairing", handler.LastRequest.RequestUri!.ToString());
+    }
+
+    [Fact]
+    public async Task SmartHomeSwitchGetAsync_ParsesStateAndStartup()
+    {
+        var (bar, handler) = CreateClient();
+        handler.ResponseBody = "{\"state\":true,\"startup\":\"toggle\"}";
+
+        var state = await bar.SmartHomeSwitchGetAsync();
+
+        Assert.True(state.State);
+        Assert.Equal(SwitchStartup.Toggle, state.Startup);
+    }
+
+    [Fact]
     public async Task SmartHomeSwitchSetAsync_SerializesStateAndStartup()
     {
         var (bar, handler) = CreateClient();

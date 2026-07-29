@@ -37,6 +37,30 @@ public class BleTests
     }
 
     [Fact]
+    public async Task BleEnableAsync_SendsPost()
+    {
+        var (bar, handler) = CreateClient();
+        handler.ResponseBody = "{\"result\":\"OK\"}";
+
+        await bar.BleEnableAsync();
+
+        Assert.Equal(HttpMethod.Post, handler.LastRequest!.Method);
+        Assert.EndsWith("ble/enable", handler.LastRequest.RequestUri!.ToString());
+    }
+
+    [Fact]
+    public async Task BleDisableAsync_SendsPost()
+    {
+        var (bar, handler) = CreateClient();
+        handler.ResponseBody = "{\"result\":\"OK\"}";
+
+        await bar.BleDisableAsync();
+
+        Assert.Equal(HttpMethod.Post, handler.LastRequest!.Method);
+        Assert.EndsWith("ble/disable", handler.LastRequest.RequestUri!.ToString());
+    }
+
+    [Fact]
     public async Task BlePairingRemoveAsync_SendsDelete()
     {
         var (bar, handler) = CreateClient();

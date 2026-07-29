@@ -39,6 +39,96 @@ public class DisplayTests
     }
 
     [Fact]
+    public async Task DisplayDrawAsync_SerializesImageElementWithDiscriminator()
+    {
+        var (bar, handler) = CreateClient();
+        handler.ResponseBody = "{\"result\":\"OK\"}";
+        var parameters = new DisplayDrawParams
+        {
+            ApplicationName = "my_app",
+            Elements = new DisplayElement[]
+            {
+                new ImageElement { Id = "0", StockPath = "logo.png", Opacity = 80 }
+            }
+        };
+
+        await bar.DisplayDrawAsync(parameters);
+
+        Assert.Contains("\"type\":\"image\"", handler.LastRequestBody);
+        Assert.Contains("\"stock_path\":\"logo.png\"", handler.LastRequestBody);
+        Assert.Contains("\"opacity\":80", handler.LastRequestBody);
+    }
+
+    [Fact]
+    public async Task DisplayDrawAsync_SerializesAnimationElementWithDiscriminator()
+    {
+        var (bar, handler) = CreateClient();
+        handler.ResponseBody = "{\"result\":\"OK\"}";
+        var parameters = new DisplayDrawParams
+        {
+            ApplicationName = "my_app",
+            Elements = new DisplayElement[]
+            {
+                new AnimationElement { Id = "0", StockPath = "wave.gif", Loop = true, Section = "default" }
+            }
+        };
+
+        await bar.DisplayDrawAsync(parameters);
+
+        Assert.Contains("\"type\":\"animation\"", handler.LastRequestBody);
+        Assert.Contains("\"loop\":true", handler.LastRequestBody);
+        Assert.Contains("\"section\":\"default\"", handler.LastRequestBody);
+    }
+
+    [Fact]
+    public async Task DisplayDrawAsync_SerializesCountdownElementWithDiscriminator()
+    {
+        var (bar, handler) = CreateClient();
+        handler.ResponseBody = "{\"result\":\"OK\"}";
+        var parameters = new DisplayDrawParams
+        {
+            ApplicationName = "my_app",
+            Elements = new DisplayElement[]
+            {
+                new CountdownElement
+                {
+                    Id = "0",
+                    Timestamp = "1761582532",
+                    Direction = CountdownDirection.TimeLeft,
+                    ShowHours = ShowHours.Always
+                }
+            }
+        };
+
+        await bar.DisplayDrawAsync(parameters);
+
+        Assert.Contains("\"type\":\"countdown\"", handler.LastRequestBody);
+        Assert.Contains("\"direction\":\"time_left\"", handler.LastRequestBody);
+        Assert.Contains("\"show_hours\":\"always\"", handler.LastRequestBody);
+    }
+
+    [Fact]
+    public async Task DisplayDrawAsync_SerializesRectangleElementWithDiscriminator()
+    {
+        var (bar, handler) = CreateClient();
+        handler.ResponseBody = "{\"result\":\"OK\"}";
+        var parameters = new DisplayDrawParams
+        {
+            ApplicationName = "my_app",
+            Elements = new DisplayElement[]
+            {
+                new RectangleElement { Id = "0", Width = 20, Height = 10, Fill = RectangleFill.Solid }
+            }
+        };
+
+        await bar.DisplayDrawAsync(parameters);
+
+        Assert.Contains("\"type\":\"rectangle\"", handler.LastRequestBody);
+        Assert.Contains("\"fill\":\"solid\"", handler.LastRequestBody);
+        Assert.Contains("\"width\":20", handler.LastRequestBody);
+    }
+
+    [Fact]
     public async Task DisplayClearAsync_OmitsQueryParam_WhenApplicationNameNotSpecified()
     {
         var (bar, handler) = CreateClient();

@@ -27,6 +27,53 @@ public class UpdateTests
     }
 
     [Fact]
+    public async Task UpdateCheckAsync_SendsPost()
+    {
+        var (bar, handler) = CreateClient();
+        handler.ResponseBody = "{\"result\":\"OK\"}";
+
+        await bar.UpdateCheckAsync();
+
+        Assert.Equal(HttpMethod.Post, handler.LastRequest!.Method);
+        Assert.EndsWith("update/check", handler.LastRequest.RequestUri!.ToString());
+    }
+
+    [Fact]
+    public async Task UpdateInstallAsync_SendsVersionQueryParam()
+    {
+        var (bar, handler) = CreateClient();
+        handler.ResponseBody = "{\"result\":\"OK\"}";
+
+        await bar.UpdateInstallAsync(new UpdateInstallParams("1.2.3"));
+
+        Assert.Contains("version=1.2.3", handler.LastRequest!.RequestUri!.Query);
+    }
+
+    [Fact]
+    public async Task UpdateAbortDownloadAsync_SendsPost()
+    {
+        var (bar, handler) = CreateClient();
+        handler.ResponseBody = "{\"result\":\"OK\"}";
+
+        await bar.UpdateAbortDownloadAsync();
+
+        Assert.Equal(HttpMethod.Post, handler.LastRequest!.Method);
+        Assert.EndsWith("update/abort_download", handler.LastRequest.RequestUri!.ToString());
+    }
+
+    [Fact]
+    public async Task UpdateAutoupdateGetAsync_ParsesSettings()
+    {
+        var (bar, handler) = CreateClient();
+        handler.ResponseBody = "{\"is_enabled\":true,\"interval_start\":\"02:00\",\"interval_end\":\"04:00\"}";
+
+        var settings = await bar.UpdateAutoupdateGetAsync();
+
+        Assert.True(settings.IsEnabled);
+        Assert.Equal("02:00", settings.IntervalStart);
+    }
+
+    [Fact]
     public async Task UpdateStatusGetAsync_ParsesNestedInstallAndCheckStatus()
     {
         var (bar, handler) = CreateClient();

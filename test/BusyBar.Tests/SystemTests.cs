@@ -25,6 +25,57 @@ public class SystemTests
     }
 
     [Fact]
+    public async Task SystemTransportGetAsync_ParsesTransportType()
+    {
+        var (bar, handler) = CreateClient();
+        handler.ResponseBody = "{\"type\":\"wifi\"}";
+
+        var info = await bar.SystemTransportGetAsync();
+
+        Assert.Equal(NetworkTransportType.Wifi, info.Type);
+    }
+
+    [Fact]
+    public async Task SystemStatusGetAsync_ParsesNestedSubStatuses()
+    {
+        var (bar, handler) = CreateClient();
+        handler.ResponseBody = """
+        {"device":{"serial_number":"abc","usb_mac":"0c:fa:22:21:2a:31","otp_valid":true,"firmware_security":"secure"},"firmware":{"version":"1.0.2","target":1,"branch":"main","build_date":"2026-01-01","commit_hash":"abcdef1"},"system":{"api_semver":"25.0.0","uptime":"1d","boot_time":1761582532,"auto_update_enabled":true},"power":{"state":"discharging","battery_charge":99,"battery_voltage":4183,"battery_current":-180,"usb_voltage":4843}}
+        """;
+
+        var status = await bar.SystemStatusGetAsync();
+
+        Assert.Equal("abc", status.Device!.SerialNumber);
+        Assert.Equal("1.0.2", status.Firmware!.Version);
+        Assert.Equal("25.0.0", status.System!.ApiSemver);
+        Assert.Equal(PowerState.Discharging, status.Power!.State);
+    }
+
+    [Fact]
+    public async Task SystemStatusFirmwareGetAsync_ParsesVersionFields()
+    {
+        var (bar, handler) = CreateClient();
+        handler.ResponseBody = "{\"version\":\"1.0.2\",\"target\":1,\"branch\":\"main\",\"build_date\":\"2026-01-01\",\"commit_hash\":\"abcdef1\"}";
+
+        var firmware = await bar.SystemStatusFirmwareGetAsync();
+
+        Assert.Equal("1.0.2", firmware.Version);
+        Assert.Equal("abcdef1", firmware.CommitHash);
+    }
+
+    [Fact]
+    public async Task SystemStatusSystemGetAsync_ParsesUptimeFields()
+    {
+        var (bar, handler) = CreateClient();
+        handler.ResponseBody = "{\"api_semver\":\"25.0.0\",\"uptime\":\"1d\",\"boot_time\":1761582532,\"auto_update_enabled\":true}";
+
+        var system = await bar.SystemStatusSystemGetAsync();
+
+        Assert.Equal("1d", system.Uptime);
+        Assert.True(system.AutoUpdateEnabled);
+    }
+
+    [Fact]
     public async Task SystemStatusDeviceGetAsync_ParsesFirmwareSecurityEnum()
     {
         var (bar, handler) = CreateClient();
