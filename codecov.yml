@@ -1,0 +1,80 @@
+flag_management:
+  individual_flags:
+    - name: unittests
+      paths:
+        - src/BusyBar/
+      carryforward: false
+
+component_management:
+  individual_components:
+    - component_id: core
+      name: Core
+      paths:
+        - "src/BusyBar/*.cs"
+    - component_id: internal
+      name: Internal transport
+      paths:
+        - "src/BusyBar/Internal/"
+    - component_id: types
+      name: Shared types
+      paths:
+        - "src/BusyBar/Types/"
+    - component_id: account
+      name: Account
+      paths:
+        - "src/BusyBar/Account/"
+    - component_id: assets
+      name: Assets
+      paths:
+        - "src/BusyBar/Assets/"
+    - component_id: audio
+      name: Audio
+      paths:
+        - "src/BusyBar/Audio/"
+    - component_id: ble
+      name: Ble
+      paths:
+        - "src/BusyBar/Ble/"
+    - component_id: busy
+      name: Busy timer
+      paths:
+        - "src/BusyBar/Busy/"
+    - component_id: display
+      name: Display
+      paths:
+        - "src/BusyBar/Display/"
+    - component_id: input
+      name: Input
+      paths:
+        - "src/BusyBar/Input/"
+    - component_id: settings
+      name: Settings
+      paths:
+        - "src/BusyBar/Settings/"
+    - component_id: smart_home
+      name: SmartHome
+      paths:
+        - "src/BusyBar/SmartHome/"
+    - component_id: storage
+      name: Storage
+      paths:
+        - "src/BusyBar/Storage/"
+    - component_id: system
+      name: System
+      paths:
+        - "src/BusyBar/System/"
+    - component_id: time
+      name: Time
+      paths:
+        - "src/BusyBar/Time/"
+    - component_id: update
+      name: Update
+      paths:
+        - "src/BusyBar/Update/"
+    - component_id: wifi
+      name: Wifi
+      paths:
+        - "src/BusyBar/Wifi/"
+
+comment:
+  layout: "header, diff, flags, components"

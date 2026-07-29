@@ -29,8 +29,9 @@ jobs:
 
       # coverage.runsettings sets IncludeTestAssembly=False so the reported percentage
       # reflects the BusyBar library only, not the (trivially near-100%-covered) test project.
+      # The junit logger feeds Codecov's Test Analytics (separate from the coverage upload below).
       - name: Test
-        run: dotnet test BusyBar.sln --no-build -c Release --settings coverage.runsettings --results-directory ./TestResults
+        run: dotnet test BusyBar.sln --no-build -c Release --settings coverage.runsettings --results-directory ./TestResults --logger "junit;LogFilePath=${{ github.workspace }}/TestResults/test-results.xml"
 
       - name: Locate coverage report
         id: coverage
@@ -43,6 +44,19 @@ jobs:
         uses: codecov/codecov-action@v7
         with:
           files: ${{ steps.coverage.outputs.file }}
+          flags: unittests
+          disable_search: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+
+      # Runs even if the Test step failed — a failing/flaky run is exactly what Test Analytics needs to see.
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/codecov-action@v7
+        with:
+          files: ./TestResults/test-results.xml
+          report_type: test_results
+          flags: unittests
           disable_search: true
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
