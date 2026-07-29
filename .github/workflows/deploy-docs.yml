@@ -8,10 +8,6 @@ on:
     types:
       - opened
       - synchronize
-  pull_request_target:
-    types:
-      - opened
-      - labeled
   workflow_dispatch:
 
 permissions:
@@ -26,11 +22,7 @@ jobs:
     if: ${{
       github.event_name == 'push' ||
       github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false) ||
-      (github.event_name == 'pull_request_target' &&
-      github.event.action == 'labeled' &&
-      github.event.pull_request.head.repo.fork == true &&
-      contains(github.event.label.name, 'request-deploy'))
+      (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false)
       }}
 
     concurrency:
@@ -142,7 +134,7 @@ jobs:
             | **Environment** | ${{ steps.cloudflare-pages-deploy.outputs.pages-environment }} |
 
       - name: Create PR comment
-        if: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
+        if: ${{ github.event_name == 'pull_request' }}
         uses: mshick/add-pr-comment@v2
         with:
           message: |
@@ -154,25 +146,3 @@ jobs:
             | **Deploy log** | ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} |
             | **Preview URL** | [${{ steps.cloudflare-pages-deploy.outputs.pages-deployment-alias-url || steps.cloudflare-pages-deploy.outputs.deployment-url }}](${{ steps.cloudflare-pages-deploy.outputs.pages-deployment-alias-url || steps.cloudflare-pages-deploy.outputs.deployment-url }}) |
             | **Environment** | ${{ steps.cloudflare-pages-deploy.outputs.pages-environment }} |
-
-  comment:
-    name: Comment
-    runs-on: ubuntu-latest
-    if: ${{
-      github.event_name == 'pull_request_target' &&
-      github.event.action == 'opened' &&
-      github.event.pull_request.head.repo.fork == true
-      }}
-
-    steps:
-      - name: Create PR comment
-        run: |
-          cat << EOF > comment.md
-          ## Deployments require the 'request-deploy' label
-
-          This is a forked repository. For security reasons, deployments from forks are not automatic.
-          Add the 'request-deploy' label to this PR to trigger a preview deployment.
-          EOF
-          gh pr comment ${{ github.event.number }} -R ${{ github.repository }} -F comment.md
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
