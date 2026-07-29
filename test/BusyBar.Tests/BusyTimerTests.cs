@@ -94,4 +94,13 @@ public class BusyTimerTests
         Assert.EndsWith("busy/profiles/busy", handler.LastRequest.RequestUri!.ToString());
         Assert.Contains("\"title\":\"study\"", handler.LastRequestBody);
     }
+
+    [Fact]
+    public async Task BusyProfileGetAsync_ThrowsArgumentOutOfRangeException_ForUndefinedSlot()
+    {
+        var (bar, handler) = CreateClient();
+
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(
+            () => bar.BusyProfileGetAsync((BusyProfileSlot)999));
+    }
 }

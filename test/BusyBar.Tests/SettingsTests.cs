@@ -52,6 +52,15 @@ public class SettingsTests
     }
 
     [Fact]
+    public async Task AccessSetAsync_ThrowsArgumentOutOfRangeException_ForUndefinedMode()
+    {
+        var (bar, handler) = CreateClient();
+
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(
+            () => bar.AccessSetAsync(new AccessSetParams((HttpAccessMode)999)));
+    }
+
+    [Fact]
     public async Task NameGetAndSet_RoundTripName()
     {
         var (bar, handler) = CreateClient();

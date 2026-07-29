@@ -39,4 +39,15 @@ public class InputTests
 
         Assert.Contains($"key={expected}", handler.LastRequest!.RequestUri!.Query);
     }
+
+    [Fact]
+    public async Task InputKeySetAsync_ThrowsArgumentOutOfRangeException_ForUndefinedKey()
+    {
+        var handler = new FakeHttpMessageHandler { ResponseBody = "{\"result\":\"OK\"}" };
+        var http = new HttpClient(handler) { BaseAddress = new Uri("http://10.0.4.20/") };
+        var bar = new Busy.Bar.BusyBar(http, new BusyBarOptions());
+
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(
+            () => bar.InputKeySetAsync(new InputKeyParams((InputKey)999)));
+    }
 }
