@@ -3,6 +3,7 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/homotechsual/busybar-dotnet/ci.yml?branch=main&style=for-the-badge&label=CI)](https://github.com/homotechsual/busybar-dotnet/actions/workflows/ci.yml)
 [![NuGet](https://img.shields.io/nuget/v/BusyBar?style=for-the-badge&label=NuGet)](https://www.nuget.org/packages/BusyBar)
 [![Codecov](https://img.shields.io/codecov/c/github/homotechsual/busybar-dotnet?style=for-the-badge&label=Coverage)](https://codecov.io/gh/homotechsual/busybar-dotnet)
+[![License: MIT](https://img.shields.io/github/license/homotechsual/busybar-dotnet?style=for-the-badge&label=License)](https://mit.licenses.homotechsual.dev)
 
 A typed .NET client for the [BUSY Bar HTTP API](https://docs.busy.app/bar/dev/http-api),
 modelled on the official [`@busy-app/busy-lib`](https://github.com/busy-app/busylib-ts)
@@ -47,6 +48,13 @@ scope — this library covers the HTTP API only.
 - Caller-supplied `CancellationToken` fires → `OperationCanceledException`
 - Device unreachable / network failure → `HttpRequestException`
 
+## Development transparency
+
+AI tools (Claude Code) are used as productivity assistants in this project's development. All
+AI-assisted code is reviewed by a human before it is pushed or published, and release gates and
+processes are built around human reviewers — nothing merges, ships, or gets tagged as a release
+without human sign-off.
+
 ## License
 
-MIT
+[MIT](LICENSE)
