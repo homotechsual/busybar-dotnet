@@ -88,10 +88,10 @@ public class BusyTimerTests
             ProfileTimestampMs = 1761582532251
         };
 
-        await bar.BusyProfileSetAsync(BusyProfileSlot.Custom, profile);
+        await bar.BusyProfileSetAsync(BusyProfileSlot.Busy, profile);
 
         Assert.Equal(HttpMethod.Put, handler.LastRequest!.Method);
-        Assert.EndsWith("busy/profiles/custom", handler.LastRequest.RequestUri!.ToString());
+        Assert.EndsWith("busy/profiles/busy", handler.LastRequest.RequestUri!.ToString());
         Assert.Contains("\"title\":\"study\"", handler.LastRequestBody);
     }
 }

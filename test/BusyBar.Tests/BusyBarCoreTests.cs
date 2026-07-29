@@ -91,6 +91,55 @@ public class BusyBarCoreTests
     }
 
     [Fact]
+    public async Task SetToken_ReflectedAsBearerAuthOnSubsequentRequest()
+    {
+        var handler = new FakeHttpMessageHandler { ResponseBody = "{\"api_semver\":\"24.3.0\"}" };
+        using var httpClient = new HttpClient(handler) { BaseAddress = new Uri("http://10.0.4.20/") };
+        using var bar = new Busy.Bar.BusyBar(httpClient, new Busy.Bar.BusyBarOptions());
+
+        bar.SetToken("runtime-token");
+        await bar.SystemVersionGetAsync();
+
+        Assert.Equal("Bearer", handler.LastRequest!.Headers.Authorization!.Scheme);
+        Assert.Equal("runtime-token", handler.LastRequest.Headers.Authorization.Parameter);
+    }
+
+    [Fact]
+    public async Task SetHttpAccessPassword_ReflectedAsApiTokenHeaderOnSubsequentRequest()
+    {
+        var handler = new FakeHttpMessageHandler { ResponseBody = "{\"api_semver\":\"24.3.0\"}" };
+        using var httpClient = new HttpClient(handler) { BaseAddress = new Uri("http://10.0.4.20/") };
+        using var bar = new Busy.Bar.BusyBar(httpClient, new Busy.Bar.BusyBarOptions());
+
+        bar.SetHttpAccessPassword("runtime-password");
+        await bar.SystemVersionGetAsync();
+
+        Assert.Equal("runtime-password", handler.LastRequest!.Headers.GetValues("x-api-token").Single());
+    }
+
+    [Fact]
+    public async Task Constructor_AppliesHttpAccessPasswordFromOptions()
+    {
+        var handler = new FakeHttpMessageHandler { ResponseBody = "{\"api_semver\":\"24.3.0\"}" };
+        using var httpClient = new HttpClient(handler) { BaseAddress = new Uri("http://10.0.4.20/") };
+        using var bar = new Busy.Bar.BusyBar(httpClient, new Busy.Bar.BusyBarOptions { HttpAccessPassword = "initial-password" });
+
+        await bar.SystemVersionGetAsync();
+
+        Assert.Equal("initial-password", handler.LastRequest!.Headers.GetValues("x-api-token").Single());
+    }
+
+    [Fact]
+    public void HttpClientConstructor_SetsBaseAddress_WhenNotAlreadySet()
+    {
+        using var httpClient = new HttpClient();
+
+        using var bar = new Busy.Bar.BusyBar(httpClient, new Busy.Bar.BusyBarOptions());
+
+        Assert.Equal("http://10.0.4.20/api/", httpClient.BaseAddress!.ToString());
+    }
+
+    [Fact]
     public async Task LocalHost_StripsBusybarPrefixFromRequest()
     {
         var handler = new FakeHttpMessageHandler { ResponseBody = "{\"api_semver\":\"24.3.0\"}" };

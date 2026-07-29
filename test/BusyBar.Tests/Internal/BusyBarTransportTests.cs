@@ -80,6 +80,21 @@ public class BusyBarTransportTests
     }
 
     [Fact]
+    public async Task SendJsonAsync_OmitsErrorBodyFromMessage_WhenResponseBodyIsNotParseableAsErrorShape()
+    {
+        var (transport, handler) = CreateTransport();
+        handler.ResponseStatusCode = System.Net.HttpStatusCode.InternalServerError;
+        handler.ResponseBody = "not json";
+
+        var exception = await Assert.ThrowsAsync<BusyBarApiException>(
+            () => transport.SendJsonAsync<SuccessResponse>(HttpMethod.Get, "busybar/version"));
+
+        Assert.Null(exception.ErrorBody);
+        Assert.Equal("not json", exception.RawBody);
+        Assert.Equal("BUSY Bar API returned 500 Internal Server Error", exception.Message);
+    }
+
+    [Fact]
     public async Task SendJsonAsync_ThrowsTimeoutException_WhenRequestExceedsTimeout()
     {
         var (transport, handler) = CreateTransport(TimeSpan.FromMilliseconds(50));
@@ -178,6 +193,34 @@ public class BusyBarTransportTests
         sw.Stop();
 
         Assert.True(sw.Elapsed < TimeSpan.FromSeconds(2), $"Expected cancellation well under the 5s body stall, took {sw.Elapsed}.");
+    }
+
+    [Fact]
+    public async Task SendBinaryUploadAsync_ThrowsOperationCanceledException_WhenRequestOptionsCancelDuringBodyRead()
+    {
+        var (transport, handler) = CreateTransport(TimeSpan.FromSeconds(5));
+        handler.BodyDelay = TimeSpan.FromSeconds(5);
+        using var body = new MemoryStream(new byte[] { 1, 2, 3 });
+        using var optionsCts = new CancellationTokenSource();
+        optionsCts.CancelAfter(TimeSpan.FromMilliseconds(100));
+        var options = new RequestOptions { CancellationToken = optionsCts.Token };
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(
+            () => transport.SendBinaryUploadAsync<SuccessResponse>(
+                HttpMethod.Post, "busybar/assets/upload", query: null, requestBody: body, options: options));
+    }
+
+    [Fact]
+    public async Task SendBinaryDownloadAsync_ThrowsOperationCanceledException_WhenRequestOptionsCancelDuringBodyRead()
+    {
+        var (transport, handler) = CreateTransport(TimeSpan.FromSeconds(5));
+        handler.BodyDelay = TimeSpan.FromSeconds(5);
+        using var optionsCts = new CancellationTokenSource();
+        optionsCts.CancelAfter(TimeSpan.FromMilliseconds(100));
+        var options = new RequestOptions { CancellationToken = optionsCts.Token };
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(
+            () => transport.SendBinaryDownloadAsync(HttpMethod.Get, "busybar/storage/read", options: options));
     }
 
     [Fact]

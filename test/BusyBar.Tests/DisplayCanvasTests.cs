@@ -34,4 +34,10 @@ public class DisplayCanvasTests
     {
         Assert.Equal(DisplayCanvas.Center, DisplayCanvas.AnchorFor(ElementAlign.Center));
     }
+
+    [Fact]
+    public void AnchorFor_ThrowsArgumentOutOfRangeException_ForUndefinedAlignment()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => DisplayCanvas.AnchorFor((ElementAlign)999));
+    }
 }

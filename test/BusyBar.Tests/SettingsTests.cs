@@ -37,6 +37,20 @@ public class SettingsTests
         Assert.Contains("key=12345678", handler.LastRequest.RequestUri.Query);
     }
 
+    [Theory]
+    [InlineData(HttpAccessMode.Disabled, "disabled")]
+    [InlineData(HttpAccessMode.Enabled, "enabled")]
+    public async Task AccessSetAsync_OmitsKeyQueryParam_ForNonKeyModes(HttpAccessMode mode, string expected)
+    {
+        var (bar, handler) = CreateClient();
+        handler.ResponseBody = "{\"result\":\"OK\"}";
+
+        await bar.AccessSetAsync(new AccessSetParams(mode));
+
+        Assert.Contains($"mode={expected}", handler.LastRequest!.RequestUri!.Query);
+        Assert.DoesNotContain("key=", handler.LastRequest.RequestUri.Query);
+    }
+
     [Fact]
     public async Task NameGetAndSet_RoundTripName()
     {

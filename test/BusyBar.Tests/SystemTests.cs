@@ -110,4 +110,15 @@ public class SystemTests
         Assert.Equal(string.Empty, handler.LastRequest!.RequestUri!.Query);
         Assert.Equal("/ext/dump.txt", result.Path);
     }
+
+    [Fact]
+    public async Task SystemLogDumpAsync_SendsFilenameQuery_WhenSpecified()
+    {
+        var (bar, handler) = CreateClient();
+        handler.ResponseBody = "{\"result\":\"OK\",\"path\":\"/ext/custom.txt\"}";
+
+        await bar.SystemLogDumpAsync(new LogDumpParams("custom.txt"));
+
+        Assert.Contains("filename=custom.txt", handler.LastRequest!.RequestUri!.Query);
+    }
 }
