@@ -15,7 +15,7 @@ const FeatureList: FeatureItem[] = [
     Svg: require('@site/static/img/icon-coverage.svg').default,
     description: (
       <>
-        Every namespace of the BUSY Bar HTTP API — Account, Assets, Audio, Ble,
+        Every namespace of the BUSY Bar HTTP API: Account, Assets, Audio, Ble,
         Busy timer, Display, Input, Settings, SmartHome, Storage, System, Time,
         Update, and Wifi.
       </>
@@ -27,7 +27,7 @@ const FeatureList: FeatureItem[] = [
     description: (
       <>
         C# records, polymorphic JSON via <code>System.Text.Json</code>, and a
-        documented exception contract — modelled on the official TypeScript
+        documented exception contract, modelled on the official TypeScript
         client&apos;s naming.
       </>
     ),
@@ -37,7 +37,7 @@ const FeatureList: FeatureItem[] = [
     Svg: require('@site/static/img/icon-cloud.svg').default,
     description: (
       <>
-        Works against a device over USB/LAN or the BUSY Cloud proxy — the
+        Works against a device over USB/LAN or the BUSY Cloud proxy; the
         library builds the right request URLs for each transport
         automatically.
       </>
@@ -48,8 +48,8 @@ const FeatureList: FeatureItem[] = [
     Svg: require('@site/static/img/icon-hardware.svg').default,
     description: (
       <>
-        Every namespace has been exercised against a physical BUSY Bar —
-        display draw, brightness, LED notifications, and more — not just
+        Every namespace has been exercised against a physical BUSY Bar,
+        display draw, brightness, LED notifications, and more, not just
         synthetic fixtures.
       </>
     ),

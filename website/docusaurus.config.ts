@@ -9,7 +9,7 @@ const config: Config = {
   title: 'BusyBar .NET',
   tagline: 'A typed .NET client for the BUSY Bar HTTP API',
   // SVG favicon derived from the navbar logo mark (with its backdrop kept, unlike the navbar
-  // version — here it sits on the browser tab, not on our identically-colored navbar, so there's
+  // version; here it sits on the browser tab, not on our identically-colored navbar, so there's
   // no camouflage risk). Supported by all current major browsers as a <link rel="icon"> target.
   favicon: 'img/favicon.svg',
 
@@ -28,11 +28,11 @@ const config: Config = {
 
   onBrokenLinks: 'throw',
   // generate-api-docs.ps1 injects a real `<a id="...">` anchor into each enum's field-table row so
-  // <see cref="Enum.Member"/> cross-references actually resolve — verified in a real browser:
+  // <see cref="Enum.Member"/> cross-references actually resolve; verified in a real browser:
   // document.getElementById('key') exists and #key correctly navigates there. Docusaurus's own
   // broken-anchor checker still flags these as broken because it validates against its own
   // heading registry, not the rendered DOM, so it never sees hand-injected HTML anchors it didn't
-  // generate itself. This is a checker false-positive, not an unresolved link — ignore it.
+  // generate itself. This is a checker false-positive, not an unresolved link; ignore it.
   onBrokenAnchors: 'ignore',
 
   // Even if you don't use internationalization, you can use this field to set

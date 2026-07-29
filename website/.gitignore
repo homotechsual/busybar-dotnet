@@ -1,4 +1,4 @@
-# Generated API reference docs — regenerate via `yarn generate-api-docs`
+# Generated API reference docs; regenerate via `yarn generate-api-docs`
 # (see ../scripts/generate-api-docs.ps1). Not committed: fully reproducible from
 # the library's XML doc comments, and would otherwise conflict with concurrent
 # doc-comment work landing on the library itself.
@@ -7,7 +7,7 @@
 # Dependencies
 /node_modules
 
-# Yarn Berry (node-modules linker) — cache/state only, not the lockfile
+# Yarn Berry (node-modules linker): cache/state only, not the lockfile
 .yarn/*
 !.yarn/patches
 !.yarn/releases

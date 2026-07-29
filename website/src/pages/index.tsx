@@ -87,7 +87,7 @@ function QuickLook() {
             <Heading as="h2">Quick look</Heading>
             <p>
               One package, one client. Connect over USB/LAN or the BUSY Cloud
-              proxy, drive the display, and read device status — all through
+              proxy, drive the display, and read device status, all through
               typed C# records instead of hand-rolled JSON.
             </p>
             <p>

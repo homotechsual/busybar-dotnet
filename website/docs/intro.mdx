@@ -10,7 +10,7 @@ sidebar_position: 1
 
 **BusyBar** is a typed .NET client for the [BUSY Bar HTTP API](https://docs.busy.app/bar/dev/http-api),
 modelled on the official [`@busy-app/busy-lib`](https://github.com/busy-app/busylib-ts) TypeScript client.
-It covers the full HTTP API surface — Account, Assets, Audio, Ble, Busy (timer), Display, Input, Settings,
+It covers the full HTTP API surface: Account, Assets, Audio, Ble, Busy (timer), Display, Input, Settings,
 SmartHome, Storage, System, Time, Update, and Wifi.
 
 ## Install
@@ -43,11 +43,11 @@ await bar.DisplayDrawAsync(new DisplayDrawParams
 `BusyBarOptions.Addr` controls where requests go, and the library automatically adjusts how it builds
 request URLs depending on which one you're talking to:
 
-- **Local (USB or LAN)** — e.g. `"10.0.4.20"`, the default. Requests go to `http://<addr>/api/...`.
-- **Cloud proxy** — `"api.busy.app"`. Requests go to `https://api.busy.app/busybar/...` and require a
+- **Local (USB or LAN)**: e.g. `"10.0.4.20"`, the default. Requests go to `http://<addr>/api/...`.
+- **Cloud proxy**: `"api.busy.app"`. Requests go to `https://api.busy.app/busybar/...` and require a
   bearer token (`BusyBarOptions.Token`), issued at [cloud.busy.app/api-tokens](https://cloud.busy.app/api-tokens).
 
-This distinction was confirmed against physical hardware — the two transports genuinely use different URL
+This distinction was confirmed against physical hardware; the two transports genuinely use different URL
 path schemes for the same logical endpoints, not just a different host.
 
 ## Error handling
