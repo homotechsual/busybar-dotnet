@@ -56,10 +56,28 @@ function HomepageHeader() {
               alt="NuGet version"
             />
           </a>
+          <a href="https://www.nuget.org/packages/BusyBar">
+            <img
+              src="https://img.shields.io/nuget/dt/BusyBar?style=for-the-badge&label=Downloads"
+              alt="NuGet downloads"
+            />
+          </a>
           <a href="https://codecov.io/gh/homotechsual/busybar-dotnet">
             <img
               src="https://img.shields.io/codecov/c/github/homotechsual/busybar-dotnet?style=for-the-badge&label=Coverage"
               alt="Test coverage"
+            />
+          </a>
+          <a href="https://mit.licenses.homotechsual.dev">
+            <img
+              src="https://img.shields.io/github/license/homotechsual/busybar-dotnet?style=for-the-badge&label=License"
+              alt="License: MIT"
+            />
+          </a>
+          <a href="https://github.com/homotechsual/busybar-dotnet/stargazers">
+            <img
+              src="https://img.shields.io/github/stars/homotechsual/busybar-dotnet?style=for-the-badge&label=Stars"
+              alt="GitHub stars"
             />
           </a>
         </p>

@@ -2,8 +2,10 @@
 
 [![CI](https://img.shields.io/github/actions/workflow/status/homotechsual/busybar-dotnet/ci.yml?branch=main&style=for-the-badge&label=CI)](https://github.com/homotechsual/busybar-dotnet/actions/workflows/ci.yml)
 [![NuGet](https://img.shields.io/nuget/v/BusyBar?style=for-the-badge&label=NuGet)](https://www.nuget.org/packages/BusyBar)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/BusyBar?style=for-the-badge&label=Downloads)](https://www.nuget.org/packages/BusyBar)
 [![Codecov](https://img.shields.io/codecov/c/github/homotechsual/busybar-dotnet?style=for-the-badge&label=Coverage)](https://codecov.io/gh/homotechsual/busybar-dotnet)
 [![License: MIT](https://img.shields.io/github/license/homotechsual/busybar-dotnet?style=for-the-badge&label=License)](https://mit.licenses.homotechsual.dev)
+[![GitHub Stars](https://img.shields.io/github/stars/homotechsual/busybar-dotnet?style=for-the-badge&label=Stars)](https://github.com/homotechsual/busybar-dotnet/stargazers)
 
 A typed .NET client for the [BUSY Bar HTTP API](https://docs.busy.app/bar/dev/http-api),
 modelled on the official [`@busy-app/busy-lib`](https://github.com/busy-app/busylib-ts)
