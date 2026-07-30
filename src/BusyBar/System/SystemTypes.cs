@@ -86,9 +86,12 @@ public sealed record StatusFirmware
     public required string CommitHash { get; init; }
 
     /// <summary>Intercom handshake version string (a forced version, a git hash, or "intercom" if the check is disabled).</summary>
-    // Nullable (not `required`): confirmed against a real physical device (firmware 1.0.2) that "intercom_version"
-    // is absent from the local device's /api/status/firmware response entirely, despite the vendored cloud-proxy
-    // OpenAPI spec marking it required. See RealDeviceFixtureTests for the captured payload this guards against.
+    // Nullable (not `required`): confirmed against real physical devices that whether "intercom_version" is
+    // present is firmware-version-dependent — absent entirely on firmware 1.0.2 (api_semver 24.3.0), present on
+    // firmware 1.1.1 (api_semver 25.0.0), matching the busybar-firmware repo's own openapi/system.yaml, which
+    // only started marking this field required as of that same firmware release. Since devices already in the
+    // field may still be on older firmware that omits it, this MUST stay nullable — `required` would throw on
+    // deserialization for any caller on pre-1.1.1 firmware. See RealDeviceFixtureTests for both captured payloads.
     public string? IntercomVersion { get; init; }
 
     /// <summary>Radio (wireless coprocessor) firmware version.</summary>

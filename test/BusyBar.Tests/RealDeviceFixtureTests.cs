@@ -6,9 +6,11 @@ using Xunit;
 namespace BusyBar.Tests;
 
 /// <summary>
-/// Regression tests using exact JSON payloads captured from a real, physical BUSY Bar device
-/// (firmware 1.0.2, api_semver 24.3.0) over USB, to prove our types deserialize real hardware
-/// output correctly — not just our own synthetic test fixtures.
+/// Regression tests using exact JSON payloads captured from a real, physical BUSY Bar device over
+/// USB, to prove our types deserialize real hardware output correctly — not just our own synthetic
+/// test fixtures. Most payloads are from firmware 1.0.2 (api_semver 24.3.0); a couple are from
+/// firmware 1.1.1 (api_semver 25.0.0), noted individually where the firmware version matters to
+/// what's being confirmed.
 /// </summary>
 public class RealDeviceFixtureTests
 {
@@ -74,9 +76,25 @@ public class RealDeviceFixtureTests
         Assert.Equal(22, firmware.Target);
         Assert.Equal("07e850ec", firmware.CommitHash);
         Assert.Equal("1611.2.1.1.255.11.71", firmware.NwpVersion);
-        // The real device payload omits "intercom_version" entirely (unlike the vendored cloud-proxy OpenAPI spec,
-        // which marks it required) — confirming StatusFirmware.IntercomVersion must be nullable, not required.
+        // Firmware 1.0.2 omits "intercom_version" entirely — see StatusFirmware_DeserializesRealDevicePayload_Firmware111
+        // below for the same device after updating to 1.1.1, where the field is present.
         Assert.Null(firmware.IntercomVersion);
+    }
+
+    [Fact]
+    public void StatusFirmware_DeserializesRealDevicePayload_Firmware111()
+    {
+        // Same physical device as StatusFirmware_DeserializesRealDevicePayload above, captured again after
+        // updating to firmware 1.1.1 (api_semver 25.0.0) — this is the firmware version where the
+        // busybar-firmware repo's openapi/system.yaml started both defining and requiring "intercom_version".
+        const string json = """
+        {"version":"1.1.1","target":22,"branch":"1.1.1","build_date":"2026-07-29","commit_hash":"ac59f45c","intercom_version":"ac59f45c","nwp_version":"1611.2.1.1.255.11.71","matter_version":"1.0"}
+        """;
+
+        var firmware = JsonSerializer.Deserialize<StatusFirmware>(json, BusyBarTransport.JsonOptions)!;
+
+        Assert.Equal("1.1.1", firmware.Version);
+        Assert.Equal("ac59f45c", firmware.IntercomVersion);
     }
 
     /// <summary>
