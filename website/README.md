@@ -1,7 +1,7 @@
 # website
 
 The BusyBar .NET docs site, built with [Docusaurus](https://docusaurus.io/). Deployed to
-[busybar-dotnet.homotechsual.dev](https://busybar-dotnet.homotechsual.dev) via Cloudflare Pages
+[dotnet.busy.homotechsual.dev](https://dotnet.busy.homotechsual.dev) via Cloudflare Pages
 (see `../.github/workflows/deploy-docs.yml`).
 
 Uses [Yarn](https://yarnpkg.com/) (pinned via Corepack; see `packageManager` in `package.json`),

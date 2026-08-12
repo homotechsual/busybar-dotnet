@@ -13,7 +13,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/homotechsual/busybar-dotnet</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageProjectUrl>https://busybar-dotnet.homotechsual.dev</PackageProjectUrl>
+    <PackageProjectUrl>https://dotnet.busy.homotechsual.dev</PackageProjectUrl>
     <PackageTags>busybar;busy-bar;iot;http-client</PackageTags>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
