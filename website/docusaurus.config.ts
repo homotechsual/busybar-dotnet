@@ -19,7 +19,7 @@ const config: Config = {
   },
 
   // Set the production url of your site here
-  url: 'https://busybar-dotnet.homotechsual.dev',
+  url: 'https://dotnet.busy.homotechsual.dev',
   baseUrl: '/',
 
   // GitHub pages deployment config.

@@ -6,10 +6,12 @@
 [![Codecov](https://img.shields.io/codecov/c/github/homotechsual/busybar-dotnet?style=for-the-badge&label=Coverage)](https://codecov.io/gh/homotechsual/busybar-dotnet)
 [![License: MIT](https://img.shields.io/github/license/homotechsual/busybar-dotnet?style=for-the-badge&label=License)](https://mit.licenses.homotechsual.dev)
 [![GitHub Stars](https://img.shields.io/github/stars/homotechsual/busybar-dotnet?style=for-the-badge&label=Stars)](https://github.com/homotechsual/busybar-dotnet/stargazers)
+[![Docs](https://img.shields.io/badge/docs-dotnet.busy.homotechsual.dev-a42828?style=for-the-badge)](https://dotnet.busy.homotechsual.dev)
 
 A typed .NET client for the [BUSY Bar HTTP API](https://docs.busy.app/bar/dev/http-api),
 modelled on the official [`@busy-app/busy-lib`](https://github.com/busy-app/busylib-ts)
-TypeScript client.
+TypeScript client. Full docs, including the API reference, live at
+[dotnet.busy.homotechsual.dev](https://dotnet.busy.homotechsual.dev).
 
 ## Install
 
@@ -36,19 +38,8 @@ await bar.DisplayDrawAsync(new DisplayDrawParams
 });
 ```
 
-## Scope
-
-Covers the full HTTP API surface: Account, Assets, Audio, Ble, Busy (timer), Display, Input,
-Settings, SmartHome, Storage, System, Time, Update, and Wifi. Real-time WebSocket state
-streaming (`StateStream` in the TS library) and WebGL rendering (`ScreenRenderer`) are out of
-scope — this library covers the HTTP API only.
-
-## Error handling
-
-- Non-2xx response → `BusyBarApiException` (`StatusCode`, `ReasonPhrase`, `RawBody`, `ErrorBody`)
-- Per-call timeout elapses → `TimeoutException`
-- Caller-supplied `CancellationToken` fires → `OperationCanceledException`
-- Device unreachable / network failure → `HttpRequestException`
+See [Getting Started](https://dotnet.busy.homotechsual.dev/intro) for scope, local-vs-cloud
+addressing, and [error handling](https://dotnet.busy.homotechsual.dev/intro#error-handling).
 
 ## Development transparency
 
