@@ -43,6 +43,8 @@ const config: Config = {
     locales: ['en'],
   },
 
+  plugins: ['./plugins/docsense.cjs'],
+
   presets: [
     [
       'classic',
